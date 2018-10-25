@@ -15,7 +15,8 @@ abstract class Strategy
         $this->returnValue = $returnValue;
     }
 
-    public function isEnabled(array $parameters = [], Context $context = null): bool {
+    public function isEnabled(array $parameters = [], Context $context = null): bool
+    {
         return $this->returnValue;
     }
 }

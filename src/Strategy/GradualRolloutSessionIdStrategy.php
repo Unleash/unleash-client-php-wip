@@ -13,14 +13,12 @@ class GradualRolloutSessionIdStrategy extends Strategy
 
     public function isEnabled(array $parameters = [], Context $context = null): bool
     {
-        if (!$context->sessionId){
+        if (!$context->sessionId) {
             return false;
         }
 
-        $percentage = (int) $parameters['percentage'];
+        $percentage = (int)$parameters['percentage'];
         $groupId = $parameters['groupId'] ?? '';
-
-
         $normalizedId = normalizeValue($context->sessionId, $groupId);
 
         return $percentage > 0 && $normalizedId <= $percentage;

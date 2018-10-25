@@ -38,7 +38,7 @@ class RemoteAddressStrategyTest extends TestCase
         $strategy = new RemoteAddressStrategy();
         $params = ['IPs' => '127.0.1.1, 127.0.1.2, 127.0.1.3'];
         $context = new Context();
-        $context->remoteAddress =  '127.0.1.5';
+        $context->remoteAddress = '127.0.1.5';
 
         $this->assertFalse($strategy->isEnabled($params, $context));
     }
@@ -58,7 +58,7 @@ class RemoteAddressStrategyTest extends TestCase
         $strategy = new RemoteAddressStrategy();
         $params = ['IPs' => '127.0.1.1, 127.0.1.2,127.0.1.3, 160.33.0.0/16'];
         $context = new Context();
-        $context->remoteAddress = '160.33.0.33' ;
+        $context->remoteAddress = '160.33.0.33';
 
         $this->assertTrue($strategy->isEnabled($params, $context));
     }
@@ -68,7 +68,7 @@ class RemoteAddressStrategyTest extends TestCase
         $strategy = new RemoteAddressStrategy();
         $params = ['IPs' => '127.invalid'];
         $context = new Context();
-        $context->remoteAddress = '127.0.0.1' ;
+        $context->remoteAddress = '127.0.0.1';
 
         $this->assertFalse($strategy->isEnabled($params, $context));
     }
@@ -78,7 +78,7 @@ class RemoteAddressStrategyTest extends TestCase
         $strategy = new RemoteAddressStrategy();
         $params = ['IPs' => '127.0.0.2, 127.invalid, 127.0.0.1'];
         $context = new Context();
-        $context->remoteAddress = '127.0.0.1' ;
+        $context->remoteAddress = '127.0.0.1';
 
         $this->assertTrue($strategy->isEnabled($params, $context));
     }

@@ -17,7 +17,7 @@ class GradualRolloutUserIdStrategy extends Strategy
             return false;
         }
 
-        $percentage = (int) $parameters['percentage'];
+        $percentage = (int)$parameters['percentage'];
         $groupId = $parameters['groupId'] ?? '';
         $normalizedUserId = normalizeValue($context->userId, $groupId);
         return $percentage > 0 && $normalizedUserId <= $percentage;

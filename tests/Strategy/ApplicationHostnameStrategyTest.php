@@ -2,7 +2,7 @@
 
 namespace Tests\Strategy;
 
-use \PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestCase;
 
 class ApplicationHostnameStrategyTest extends TestCase
 {
@@ -29,7 +29,7 @@ class ApplicationHostnameStrategyTest extends TestCase
     {
         $_SERVER['host_name'] = '';
         $strategy = new \Unleash\Strategy\ApplicationHostnameStrategy();
-        $this->assertTrue($strategy->isEnabled(['hostNames' => 'localhost, '. $_SERVER['host_name']]));
+        $this->assertTrue($strategy->isEnabled(['hostNames' => 'localhost, ' . $_SERVER['host_name']]));
     }
 
     public function testShouldBeEnabledWhenHostnameIsDefinedViaServerGlobal()

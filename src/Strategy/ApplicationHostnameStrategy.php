@@ -17,7 +17,6 @@ class ApplicationHostnameStrategy extends Strategy
 
     public function isEnabled(array $parameters = [], Context $context = null): bool
     {
-
         if (!isset($parameters['hostNames'])) {
             return false;
         }

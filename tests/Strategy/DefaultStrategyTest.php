@@ -2,7 +2,7 @@
 
 namespace Tests\Strategy;
 
-use \PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestCase;
 
 class DefaultStrategyTest extends TestCase
 {

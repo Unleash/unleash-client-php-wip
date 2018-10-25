@@ -25,7 +25,7 @@ class RemoteAddressStrategy extends Strategy
                 if ($range === $context->remoteAddress) {
                     return true;
                 } else if (!filter_var($range, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-                    if(IpUtils::checkIp($context->remoteAddress, $range)){
+                    if (IpUtils::checkIp($context->remoteAddress, $range)) {
                         return true;
                     }
                 }
@@ -36,6 +36,4 @@ class RemoteAddressStrategy extends Strategy
 
         return false;
     }
-
-
 }
