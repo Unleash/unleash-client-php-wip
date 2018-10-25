@@ -1,0 +1,12 @@
+{
+  "name": "unleash/client",
+  "description": "Unleash Client for PHP",
+  "type": "library",
+  "license": "Apache-2.0",
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "Unleash\\": "src"
+    }
+  }
+}
