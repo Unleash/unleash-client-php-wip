@@ -15,6 +15,9 @@ class GradualRolloutRandomStrategy extends Strategy
     {
         $percentage = $parameters['percentage'];
         $random = round((mt_rand() / mt_getrandmax()) * 100);
+        if ($random === 0) {
+            return false;
+        }
 
         return $percentage >= $random;
     }
