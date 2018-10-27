@@ -14,7 +14,7 @@ class GradualRolloutRandomStrategy extends Strategy
     public function isEnabled(array $parameters = [], Context $context = null): bool
     {
         $percentage = $parameters['percentage'];
-        $random = round((mt_rand() / mt_getrandmax()) * 100);
+        $random = mt_rand(0,100);
         if ($random === 0) {
             return false;
         }
