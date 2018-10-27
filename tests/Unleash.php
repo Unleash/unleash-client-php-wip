@@ -3,13 +3,18 @@
 namespace Test;
 
 use PHPUnit\Framework\TestCase;
+use Unleash\Events\WarnEvent;
 
 class Unleash extends TestCase
 {
     public function testShouldHandleOldUrl()
     {
-        $instance = new \Unleash\Unleash(
-            'foo',
+        $instance = new \Unleash\Unleash();
+        $instance->addListener('warn', function (WarnEvent $event) {
+            $this->assertNotNull($event);
+        });
+
+        $instance->init('foo',
             'http://test.nl/client/features',
             null,
             0,
@@ -17,9 +22,6 @@ class Unleash extends TestCase
             true
         );
 
-        $instance->addListener('warn', function ($warn){
-            $this->assertNotNull($warn);
-        });
 
         $instance->destroy();
     }

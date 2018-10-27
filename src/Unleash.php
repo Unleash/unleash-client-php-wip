@@ -27,7 +27,6 @@ class Unleash extends EventDispatcher
     private $metrics;
 
     /**
-     * Unleash constructor.
      * @param string $appName
      * @param string $url
      * @param string $instanceId
@@ -38,7 +37,7 @@ class Unleash extends EventDispatcher
      * @param Strategy[] $strategies
      * @param array $customHeaders
      */
-    public function __construct(
+    public function init(
         string $appName,
         string $url,
         string $instanceId = null,
@@ -52,7 +51,7 @@ class Unleash extends EventDispatcher
         if (substr($url, -9) === '/features') {
             $oldUrl = $url;
             $err = ['message' => 'Unleash server URL ' . $oldUrl . ' should no longer link directly to /features'];
-            $event = new ErrorEvent($err);
+            $event = new WarnEvent($err);
             $this->dispatch('warn', $event);
             $url = str_replace('/features', '', $url);
         }
