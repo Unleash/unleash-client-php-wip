@@ -11,9 +11,9 @@ class GradualRolloutUserIdStrategy extends Strategy
         parent::__construct('gradualRolloutUserId');
     }
 
-    public function isEnabled(array $parameters = [], Context $context = null): bool
+    public function isEnabled(array $parameters = null, Context $context = null): bool
     {
-        if (empty($context->userId)) {
+        if (empty($context->userId) || !isset($parameters['percentage'])) {
             return false;
         }
 

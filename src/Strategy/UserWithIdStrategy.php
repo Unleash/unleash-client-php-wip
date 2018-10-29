@@ -11,8 +11,12 @@ class UserWithIdStrategy extends Strategy
         parent::__construct('userWithId');
     }
 
-    public function isEnabled(array $parameters = [], Context $context = null): bool
+    public function isEnabled(array $parameters = null, Context $context = null): bool
     {
+        if (!isset($parameters['userIds'])) {
+            return false;
+        }
+
         $userIds = array_map('trim', explode(',', $parameters['userIds']));
         return in_array($context->userId, $userIds);
     }

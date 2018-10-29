@@ -3,6 +3,7 @@
 namespace Unleash;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Unleash\Events\WarnEvent;
 use Unleash\Strategy\Strategy;
 use Unleash\Strategy\StrategyTransportInterface;
 
@@ -21,6 +22,12 @@ class UnleashClient extends EventDispatcher
     {
         $this->repository = $repository;
         $this->strategies = $strategies;
+
+        foreach ($strategies as $strategy){
+            if(!$strategy instanceof Strategy){
+                throw new \Exception('Invalid strategy data / interface');
+            }
+        }
     }
 
     private function getStrategy(string $name): ?Strategy
@@ -55,20 +62,19 @@ class UnleashClient extends EventDispatcher
                     $strategies
                 )
             );
-            $this->dispatch('warn',
-                "Missing strategy " . $missingStrategy . " for toggle " . $name . ". Ensure that " . $strategyNames . " are supported before using this toggle");
+            $this->dispatch('warn',new WarnEvent("Missing strategy " . $missingStrategy . " for toggle " . $name . ". Ensure that " . $strategyNames . " are supported before using this toggle"));
         }
     }
 
-    public function isEnabled(string $name, Context $context, bool $fallbackValue = false): bool
+    public function isEnabled(string $name, Context $context = null, bool $fallbackValue = null): bool
     {
         $feature = $this->repository->getToggle($name);
 
-        if($feature === null){
+        if($feature === null && is_bool($fallbackValue)){
             return $fallbackValue;
         }
 
-        if(!$feature->enabled){
+        if($feature === null || !$feature->enabled){
             return false;
         }
 
@@ -86,13 +92,27 @@ class UnleashClient extends EventDispatcher
             return $strategy->isEnabled($strategySelector->parameters, $context);
         }
 
-        return $fallbackValue;
+        return false;
     }
 
-    public function initialize($options)
+    public function initialize(array $options)
     {
-        throw new \Exception("Not implemented", 1);
+        $instance = new Unleash();
+        $instance->addListener('error', function (){});
 
+        $instance->initialize(
+            $options['appName'],
+            $options['url'],
+            $options['instanceId'],
+            $options['refreshInterval'],
+            $options['metricsInterval'],
+            $options['disableMetrics'],
+            $options['backupPath'],
+            $options['stategies'],
+            $options['customHeaders']
+        );
+
+        return $instance;
     }
 
     public function destroy()

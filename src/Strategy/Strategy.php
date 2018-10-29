@@ -4,7 +4,7 @@ namespace Unleash\Strategy;
 
 use Unleash\Context;
 
-abstract class Strategy
+class Strategy
 {
     public $name;
     private $returnValue;
@@ -15,7 +15,7 @@ abstract class Strategy
         $this->returnValue = $returnValue;
     }
 
-    public function isEnabled(array $parameters = [], Context $context = null): bool
+    public function isEnabled(array $parameters = null, Context $context = null): bool
     {
         return $this->returnValue;
     }

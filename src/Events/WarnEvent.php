@@ -12,4 +12,9 @@ class WarnEvent extends Event
     {
         $this->msg = $msg;
     }
+
+    public function getMessage()
+    {
+        return $this->msg;
+    }
 }

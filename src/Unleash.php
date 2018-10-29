@@ -2,6 +2,9 @@
 
 namespace Unleash;
 
+use GuzzleHttp\Client;
+use Sabre\Event\EventEmitter;
+use Sabre\Event\Loop\Loop;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Unleash\Events\CountEvent;
 use Unleash\Events\ErrorEvent;
@@ -36,8 +39,9 @@ class Unleash extends EventDispatcher
      * @param string $backupPath
      * @param Strategy[] $strategies
      * @param array $customHeaders
+     * @param Client|null $client
      */
-    public function init(
+    public function initialize(
         string $appName,
         string $url,
         string $instanceId = null,
@@ -46,7 +50,8 @@ class Unleash extends EventDispatcher
         bool $disableMetrics = false,
         string $backupPath = '',//@todo: should be a tmp directory
         array $strategies = [],
-        array $customHeaders = []
+        array $customHeaders = [],
+        Client $client = null
     ) {
         if (substr($url, -9) === '/features') {
             $oldUrl = $url;
@@ -56,7 +61,7 @@ class Unleash extends EventDispatcher
             $url = str_replace('/features', '', $url);
         }
 
-        if (!substr($url, -1) === '/') {
+        if (substr($url, -1) !== '/') {
             $url .= '/';
         }
 
@@ -73,7 +78,9 @@ class Unleash extends EventDispatcher
             $appName,
             $instanceId,
             $refreshInterval,
-            $customHeaders
+            $customHeaders,
+            null,
+            $client
         );
 
         $defaultStrategies = [
@@ -87,7 +94,6 @@ class Unleash extends EventDispatcher
         ];
 
         $strategies = array_merge($defaultStrategies, $strategies);
-
         $this->repository->addListener('ready', function () use ($strategies) {
             $this->client = new UnleashClient($this->repository, $strategies);
             $this->client->addListener('error', function (ErrorEvent $event) {
@@ -100,8 +106,12 @@ class Unleash extends EventDispatcher
         });
 
         $this->repository->addListener('error', function (ErrorEvent $event) {
-            $event->getError()->message = 'Unleash Repository error: ' . $event->getError()->message;
+            $event->getError()['message'] = 'Unleash Repository error: ' . $event->getError()['message'];
             $this->dispatch('error', $event);
+        });
+
+        $this->repository->addListener('warn', function (WarnEvent $event){
+            $this->dispatch('warn', $event);
         });
 
         $this->metrics = new Metrics(
@@ -116,7 +126,7 @@ class Unleash extends EventDispatcher
 
         $this->metrics->addListener('error', function (ErrorEvent $event) {
             $event->setError('Unleash Metrics error: ' . $event->getError());
-            $this->metrics->dispatch('error', $event);
+            $this->dispatch('error', $event);
         });
 
         $this->metrics->addListener('warn', function (WarnEvent $event) {
@@ -136,13 +146,18 @@ class Unleash extends EventDispatcher
         });
     }
 
-    public function isEnabled(string $name, Context $context, bool $fallbackValue = false)
+    public function fetch()
+    {
+        $this->repository->fetch();
+    }
+
+    public function isEnabled(string $name, Context $context = null, bool $fallbackValue = null)
     {
         $result = null;
-        if ($this->client === null) {
+        if ($this->client !== null) {
             $result = $this->client->isEnabled($name, $context, $fallbackValue);
         } else {
-            $result = $fallbackValue;
+            $result = is_bool($fallbackValue) ? $fallbackValue : false;
             $this->dispatch('warn',
                 new WarnEvent('Unleash has not been initialized yet. isEnabled(' . $name . ') defaulted to ' . $fallbackValue)
             );
