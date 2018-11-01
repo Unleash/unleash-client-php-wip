@@ -79,8 +79,10 @@ class Repository extends EventDispatcher
         }
 
         if (!($response->getStatusCode() >= 200 && $response->getStatusCode() < 300)) {
-            return $this->dispatch('error',
-                new ErrorEvent(['message' => 'Response was not statusCode 2XX, but was ' . $response->getStatusCode()]));
+            return $this->dispatch(
+                'error',
+                new ErrorEvent(['message' => 'Response was not statusCode 2XX, but was ' . $response->getStatusCode()])
+            );
         }
 
         $payload = json_decode($response->getBody()->getContents(), true);
@@ -91,7 +93,7 @@ class Repository extends EventDispatcher
         $this->dispatch('data');
     }
 
-    function pickData(array $data): array
+    public function pickData(array $data): array
     {
         $features = [];
         foreach ($data['features'] as $row) {

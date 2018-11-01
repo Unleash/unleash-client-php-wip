@@ -23,8 +23,8 @@ class UnleashClient extends EventDispatcher
         $this->repository = $repository;
         $this->strategies = $strategies;
 
-        foreach ($strategies as $strategy){
-            if(!$strategy instanceof Strategy){
+        foreach ($strategies as $strategy) {
+            if (!$strategy instanceof Strategy) {
                 throw new \Exception('Invalid strategy data / interface');
             }
         }
@@ -62,7 +62,7 @@ class UnleashClient extends EventDispatcher
                     $strategies
                 )
             );
-            $this->dispatch('warn',new WarnEvent("Missing strategy " . $missingStrategy . " for toggle " . $name . ". Ensure that " . $strategyNames . " are supported before using this toggle"));
+            $this->dispatch('warn', new WarnEvent("Missing strategy " . $missingStrategy . " for toggle " . $name . ". Ensure that " . $strategyNames . " are supported before using this toggle"));
         }
     }
 
@@ -70,21 +70,21 @@ class UnleashClient extends EventDispatcher
     {
         $feature = $this->repository->getToggle($name);
 
-        if($feature === null && is_bool($fallbackValue)){
+        if ($feature === null && is_bool($fallbackValue)) {
             return $fallbackValue;
         }
 
-        if($feature === null || !$feature->enabled){
+        if ($feature === null || !$feature->enabled) {
             return false;
         }
 
-        if(count($feature->strategies) === 0){
+        if (count($feature->strategies) === 0) {
             return $feature->enabled;
         }
 
-        foreach ($feature->strategies as $strategySelector){
+        foreach ($feature->strategies as $strategySelector) {
             $strategy = $this->getStrategy($strategySelector->name);
-            if($strategy === null){
+            if ($strategy === null) {
                 $this->warnOnce($strategySelector->name, $name, $feature->strategies);
                 continue;
             }
@@ -98,7 +98,8 @@ class UnleashClient extends EventDispatcher
     public function initialize(array $options)
     {
         $instance = new Unleash();
-        $instance->addListener('error', function (){});
+        $instance->addListener('error', function () {
+        });
 
         $instance->initialize(
             $options['appName'],
@@ -118,18 +119,15 @@ class UnleashClient extends EventDispatcher
     public function destroy()
     {
         throw new \Exception("Not implemented", 1);
-
     }
 
     public function getFeatureToggleDefinition($toggleName)
     {
         throw new \Exception("Not implemented", 1);
-
     }
 
     public function count($toggleName, $enabled)
     {
         throw new \Exception("Not implemented", 1);
-
     }
 }

@@ -116,7 +116,7 @@ class Metrics extends EventDispatcher
         $url = '/client/register';
         try {
             $response = $this->client->request('post', $url, $options);
-        } catch (ClientException $exception){
+        } catch (ClientException $exception) {
             $response = $exception->getResponse();
         } catch (ServerException $exception) {
             $this->dispatch('error', new ErrorEvent([$exception->getMessage()]));
@@ -160,7 +160,7 @@ class Metrics extends EventDispatcher
         $url = '/client/metrics';
         try {
             $response = $this->client->request('post', $url, $options);
-        }catch (ClientException $exception){
+        } catch (ClientException $exception) {
             if ($exception->getResponse()->getStatusCode() === 404) {
                 $this->dispatch('warn', new WarnEvent($url . ' returning 404, stopping metrics'));
                 $this->stop();

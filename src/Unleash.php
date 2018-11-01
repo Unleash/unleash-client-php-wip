@@ -110,7 +110,7 @@ class Unleash extends EventDispatcher
             $this->dispatch('error', $event);
         });
 
-        $this->repository->addListener('warn', function (WarnEvent $event){
+        $this->repository->addListener('warn', function (WarnEvent $event) {
             $this->dispatch('warn', $event);
         });
 
@@ -158,7 +158,8 @@ class Unleash extends EventDispatcher
             $result = $this->client->isEnabled($name, $context, $fallbackValue);
         } else {
             $result = is_bool($fallbackValue) ? $fallbackValue : false;
-            $this->dispatch('warn',
+            $this->dispatch(
+                'warn',
                 new WarnEvent('Unleash has not been initialized yet. isEnabled(' . $name . ') defaulted to ' . $fallbackValue)
             );
         }
@@ -166,7 +167,8 @@ class Unleash extends EventDispatcher
         return $result;
     }
 
-    public function count(string $toggleName, bool $enabled){
+    public function count(string $toggleName, bool $enabled)
+    {
         $this->metrics->count($toggleName, $enabled);
     }
 

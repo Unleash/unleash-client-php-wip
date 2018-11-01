@@ -20,11 +20,10 @@ class RemoteAddressStrategy extends Strategy
 
         $ips = array_map('trim', explode(',', $parameters['IPs']));
         foreach ($ips as $range) {
-
             try {
                 if ($range === $context->remoteAddress) {
                     return true;
-                } else if (!filter_var($range, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                } elseif (!filter_var($range, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
                     if (IpUtils::checkIp($context->remoteAddress, $range)) {
                         return true;
                     }
