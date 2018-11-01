@@ -3,8 +3,11 @@
 namespace Unleash;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Unleash\Events\CountEvent;
+use Unleash\Events\ErrorEvent;
 use Unleash\Events\RegisterEvent;
 use Unleash\Events\SentEvent;
 use Unleash\Events\WarnEvent;
@@ -24,6 +27,7 @@ class Metrics extends EventDispatcher
     private $started;
     private $headers;
     private $client;
+
 
     public function __construct(
         string $appName,
@@ -72,8 +76,6 @@ class Metrics extends EventDispatcher
             $this->sendMetrics();
         });
 
-
-        sleep(2);
         if (getenv('env') !== 'test') {
             \Ev::run(\Ev::RUN_NOWAIT);
         } else {
@@ -107,12 +109,19 @@ class Metrics extends EventDispatcher
                 ],
                 $this->headers
             ),
-            'json' => $payload
+            'json'            => $payload,
         ];
 
         //@todo: add dispatch for when the post gives a error
         $url = '/client/register';
-        $response = $this->client->request('post', $url, $options);
+        try {
+            $response = $this->client->request('post', $url, $options);
+        } catch (ClientException $exception){
+            $response = $exception->getResponse();
+        } catch (ServerException $exception) {
+            $this->dispatch('error', new ErrorEvent([$exception->getMessage()]));
+            return false;
+        }
 
         if (!($response->getStatusCode() >= 200 && $response->getStatusCode() < 300)) {
             $this->dispatch('warn', new WarnEvent($url . ' returning ' . $response->getStatusCode()));
@@ -146,14 +155,21 @@ class Metrics extends EventDispatcher
                 ],
                 $this->headers
             ),
-            'json' => $payload
+            'json'            => $payload,
         ];
         $url = '/client/metrics';
-        $response = $this->client->request('post',$url, $options);
+        try {
+            $response = $this->client->request('post', $url, $options);
+        }catch (ClientException $exception){
+            if ($exception->getResponse()->getStatusCode() === 404) {
+                $this->dispatch('warn', new WarnEvent($url . ' returning 404, stopping metrics'));
+                $this->stop();
+                return false;
+            }
 
-        if($response->getStatusCode() === 404){
-            $this->dispatch('warn', new WarnEvent($url . ' returning 404, stopping metrics'));
-            $this->stop();
+            $response = $exception->getResponse();
+        } catch (ServerException $exception) {
+            $this->dispatch('error', new ErrorEvent([$exception->getMessage()]));
             return false;
         }
 
@@ -168,18 +184,18 @@ class Metrics extends EventDispatcher
 
     public function count(string $name = null, bool $enabled = false): bool
     {
-        if($this->disabled){
+        if ($this->disabled) {
             return false;
         }
 
-        if(!isset($this->bucket->toggles[$name])){
+        if (!isset($this->bucket->toggles[$name])) {
             $this->bucket->toggles[$name] = [
                 'yes' => 0,
-                'no' => 0
+                'no'  => 0,
             ];
         }
 
-        $this->bucket->toggles[$name][$enabled ? 'yes': 'no']++;
+        $this->bucket->toggles[$name][$enabled ? 'yes' : 'no']++;
         $this->dispatch('count', new CountEvent($name, $enabled));
 
         return true;
@@ -194,6 +210,8 @@ class Metrics extends EventDispatcher
     {
         $bucket = new Bucket();
         $bucket->start = new \DateTime();
+        $bucket->stop = null;
+        $bucket->toggles = [];
         $this->bucket = $bucket;
     }
 
@@ -224,9 +242,9 @@ class Metrics extends EventDispatcher
     public function getMetricsData()
     {
         return [
-            'appName' => $this->appName,
+            'appName'    => $this->appName,
             'instanceId' => $this->instanceId,
-            'bucket' => (array) $this->bucket
+            'bucket'     => (array)$this->bucket,
         ];
     }
 }
