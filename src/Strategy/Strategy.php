@@ -8,6 +8,7 @@ class Strategy
 {
     public $name;
     private $returnValue;
+    public $parameters;
 
     public function __construct(string $name = 'unknown', bool $returnValue = false)
     {
