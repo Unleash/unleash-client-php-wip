@@ -1,0 +1,34 @@
+sudo: required
+language: php
+php:
+  - 7.1
+  - 7.2
+  - 7.3
+
+matrix:
+  include:
+  - php: 7.1
+    env: dependencies=lowest
+  - php: 7.2
+    env: dependencies=lowest
+  - php: 7.3
+    env: dependencies=lowest
+  - php: 7.1
+    env: dependencies=highest
+  - php: 7.2
+    env: dependencies=highest
+  - php: 7.3
+    env: dependencies=highest
+
+before_script:
+  - printf "\n" | pecl install ev
+  - composer self-update -q
+  - if [ -z "$dependencies" ]; then composer install --no-interaction; fi;
+  - if [ "$dependencies" = "lowest" ]; then composer update --prefer-lowest -n; fi;
+  - if [ "$dependencies" = "highest" ]; then composer update -n; fi;
+
+script: phpunit
+
+cache:
+  directories:
+  - $HOME/.composer/cache/files

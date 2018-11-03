@@ -56,7 +56,7 @@ class UnleashClient extends EventDispatcher
             $strategyNames = implode(
                 ", ",
                 array_map(
-                    function (Strategy $strategy) {
+                    function (StrategyTransportInterface $strategy) {
                         return $strategy->name;
                     },
                     $strategies

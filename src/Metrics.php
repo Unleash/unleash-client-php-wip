@@ -106,7 +106,7 @@ class Metrics extends EventDispatcher
         } catch (ClientException $exception) {
             $response = $exception->getResponse();
         } catch (ServerException $exception) {
-            $this->dispatch('error', new ErrorEvent([$exception->getMessage()]));
+            $this->dispatch('error', new ErrorEvent(['message' => $exception->getMessage()]));
             return false;
         }
 
@@ -145,7 +145,7 @@ class Metrics extends EventDispatcher
 
             $response = $exception->getResponse();
         } catch (ServerException $exception) {
-            $this->dispatch('error', new ErrorEvent([$exception->getMessage()]));
+            $this->dispatch('error', new ErrorEvent(['message' => $exception->getMessage()]));
             return false;
         }
 

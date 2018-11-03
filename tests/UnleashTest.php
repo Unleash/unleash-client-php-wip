@@ -90,9 +90,9 @@ class UnleashTest extends TestCase
             0,
             true
         );
-        Assert::readAttribute($instance, 'repository')->dispatch('error', new ErrorEvent([]));
-        Assert::readAttribute($instance, 'metrics')->dispatch('error', new ErrorEvent([]));
-        Assert::readAttribute(Assert::readAttribute($instance, 'repository'), 'storage')->dispatch('error', new ErrorEvent([]));
+        Assert::readAttribute($instance, 'repository')->dispatch('error', new ErrorEvent(['message' => 'error']));
+        Assert::readAttribute($instance, 'metrics')->dispatch('error', new ErrorEvent(['message' => 'error']));
+        Assert::readAttribute(Assert::readAttribute($instance, 'repository'), 'storage')->dispatch('error', new ErrorEvent(['message' => 'error']));
 
 
         $this->assertEquals(3, $amountOfErrors);

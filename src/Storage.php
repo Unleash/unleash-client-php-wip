@@ -39,7 +39,7 @@ class Storage extends EventDispatcher
 
     public function get(string $key): ?FeatureInterface
     {
-        return $this->data[$key];
+        return $this->data[$key] ?? null;
     }
 
     public function persist()

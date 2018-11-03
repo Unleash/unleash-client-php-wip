@@ -4,10 +4,11 @@ namespace Unleash\Strategy;
 
 use Unleash\Context;
 
-class Strategy
+class Strategy extends StrategyTransportInterface
 {
     public $name;
     private $returnValue;
+    public $parameters;
 
     public function __construct(string $name = 'unknown', bool $returnValue = false)
     {

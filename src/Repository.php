@@ -81,7 +81,7 @@ class Repository extends EventDispatcher
         } catch (ClientException $exception) {
             $response = $exception->getResponse();
         } catch (ServerException $exception) {
-            $this->dispatch('error', new ErrorEvent([$exception->getMessage()]));
+            $this->dispatch('error', new ErrorEvent(['message' => $exception->getMessage()]));
             return false;
         }
 
@@ -112,8 +112,8 @@ class Repository extends EventDispatcher
             $feature = new Feature();
             $feature->name = $row['name'];
             $feature->enabled = $row['enabled'];
-            $feature->strategies = [new StrategyTransportInterface($row['strategy'], $row['parameters'])];
-            $features[] = $feature;
+            $feature->strategies = [new StrategyTransportInterface($row['strategy'], $row['parameters'] ?? null)];
+            $features[$row['name']] = $feature;
         }
 
         return [
