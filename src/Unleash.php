@@ -126,7 +126,7 @@ class Unleash extends EventDispatcher
         );
 
         $this->metrics->addListener('error', function (ErrorEvent $event) {
-            $event->setError('Unleash Metrics error: ' . $event->getError());
+            $event->setError('Unleash Metrics error: ' . $event->getError()['message']);
             $this->dispatch('error', $event);
         });
 
