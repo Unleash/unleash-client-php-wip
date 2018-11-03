@@ -113,7 +113,7 @@ class Repository extends EventDispatcher
             $feature->name = $row['name'];
             $feature->enabled = $row['enabled'];
             $feature->strategies = [new StrategyTransportInterface($row['strategy'], $row['parameters'] ?? null)];
-            $features[] = $feature;
+            $features[$row['name']] = $feature;
         }
 
         return [

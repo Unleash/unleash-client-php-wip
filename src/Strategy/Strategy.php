@@ -4,7 +4,7 @@ namespace Unleash\Strategy;
 
 use Unleash\Context;
 
-class Strategy
+class Strategy extends StrategyTransportInterface
 {
     public $name;
     private $returnValue;
