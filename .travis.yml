@@ -1,3 +1,4 @@
+sudo: required
 language: php
 php:
   - 7.1
@@ -20,7 +21,7 @@ matrix:
     env: dependencies=highest
 
 before_script:
-  - composer self-update
+  - pecl install ev
   - composer self-update -q
   - if [ -z "$dependencies" ]; then composer install --no-interaction; fi;
   - if [ "$dependencies" = "lowest" ]; then composer update --prefer-lowest -n; fi;
