@@ -115,13 +115,14 @@ class Unleash extends EventDispatcher
         });
 
         $this->metrics = new Metrics(
-            $disableMetrics,
             $appName,
             $instanceId,
             $strategies,
-            $metricsInterval,
             $url,
-            $customHeaders
+            $customHeaders,
+            $metricsInterval,
+            $disableMetrics,
+            $this->client
         );
 
         $this->metrics->addListener('error', function (ErrorEvent $event) {
