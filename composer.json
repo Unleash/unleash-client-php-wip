@@ -12,7 +12,7 @@
     "lastguest/murmurhash": "^2.0",
     "symfony/http-foundation": "^3.0 || ^4.0",
     "symfony/event-dispatcher": "3.0 || ^4.0",
-    "guzzlehttp/guzzle": "~5.0 || ~6.0"
+    "guzzlehttp/guzzle": "~6.0"
   },
   "autoload": {
     "files": [
