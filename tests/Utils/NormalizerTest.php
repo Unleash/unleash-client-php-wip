@@ -4,7 +4,7 @@ namespace Test\Utils;
 
 use PHPUnit\Framework\TestCase;
 
-class TestNormalizer extends TestCase
+class NormalizerTest extends TestCase
 {
     public function testNormalizer(){
         $this->assertEquals(73, normalizeValue('123','gr1'));

@@ -6,7 +6,7 @@ use Unleash\Context;
 
 class DefaultStrategy extends Strategy
 {
-    public function isEnabled(array $parameters = [], Context $context = null): bool
+    public function isEnabled(array $parameters = null, Context $context = null): bool
     {
         return true;
     }

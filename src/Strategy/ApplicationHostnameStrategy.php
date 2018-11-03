@@ -15,7 +15,7 @@ class ApplicationHostnameStrategy extends Strategy
         $this->hostname = strtolower($_SERVER['host_name'] ?? 'undefined');
     }
 
-    public function isEnabled(array $parameters = [], Context $context = null): bool
+    public function isEnabled(array $parameters = null, Context $context = null): bool
     {
         if (!isset($parameters['hostNames'])) {
             return false;

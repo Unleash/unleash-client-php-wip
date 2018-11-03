@@ -12,7 +12,7 @@ class RemoteAddressStrategy extends Strategy
         parent::__construct('remoteAddress');
     }
 
-    public function isEnabled(array $parameters = [], Context $context = null): bool
+    public function isEnabled(array $parameters = null, Context $context = null): bool
     {
         if (empty($parameters['IPs'])) {
             return false;
@@ -20,11 +20,10 @@ class RemoteAddressStrategy extends Strategy
 
         $ips = array_map('trim', explode(',', $parameters['IPs']));
         foreach ($ips as $range) {
-
             try {
                 if ($range === $context->remoteAddress) {
                     return true;
-                } else if (!filter_var($range, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                } elseif (!filter_var($range, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
                     if (IpUtils::checkIp($context->remoteAddress, $range)) {
                         return true;
                     }

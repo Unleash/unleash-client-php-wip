@@ -11,8 +11,12 @@ class GradualRolloutRandomStrategy extends Strategy
         parent::__construct('gradualRolloutRandom');
     }
 
-    public function isEnabled(array $parameters = [], Context $context = null): bool
+    public function isEnabled(array $parameters = null, Context $context = null): bool
     {
+        if (!isset($parameters['percentage'])) {
+            return false;
+        }
+
         $percentage = $parameters['percentage'];
         $random = mt_rand(0,100);
         if ($random === 0) {
