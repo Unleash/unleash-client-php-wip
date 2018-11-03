@@ -3,12 +3,15 @@
 namespace Unleash;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Unleash\Events\ErrorEvent;
 use Unleash\Strategy\StrategyTransportInterface;
 
 class Repository extends EventDispatcher
 {
+    private $timer;
     private $url;
     private $refreshInterval;
     private $instanceId;
@@ -16,7 +19,7 @@ class Repository extends EventDispatcher
     private $headers;
     private $storage;
     private $client;
-    private $etag;
+    private $etag = 'unknown';
 
     public function __construct(
         string $backupPath,
@@ -55,25 +58,34 @@ class Repository extends EventDispatcher
         });
     }
 
+    public function timedFetch()
+    {
+        if ($this->refreshInterval !== null && $this->refreshInterval > 0) {
+            $this->timer = new \EvTimer($this->refreshInterval, 0, function () {
+                $this->fetch();
+            });
+            if (getenv('env') !== 'test') {
+                \Ev::run(\Ev::RUN_NOWAIT);
+            } else {
+                \Ev::run();
+            }
+        }
+    }
+
     public function fetch()
     {
         $url = './client/features';
-        $options = [
-            'connect_timeout' => 1,//@todo: 10000 in Node we need to check how long this is seconds.
-            'headers'         => array_merge(
-                [
-                    'UNLEASH-APPNAME'    => $this->appName,
-                    'UNLEASH-INSTANCEID' => $this->instanceId,
-                    'User-Agent'         => $this->appName,
-                ],
-                $this->headers
-            ),
-        ];
-
-        if (!empty($this->etag)) {
-            $options['If-None-match'] = $this->etag;
+        $options = $this->createOptions();
+        try {
+            $response = $this->client->get($url, $options);
+        } catch (ClientException $exception) {
+            $response = $exception->getResponse();
+        } catch (ServerException $exception) {
+            $this->dispatch('error', new ErrorEvent([$exception->getMessage()]));
+            return false;
         }
-        $response = $this->client->get($url, $options);
+
+        $this->timedFetch();
         if ($response->getStatusCode() === 304) {
             return;
         }
@@ -118,5 +130,21 @@ class Repository extends EventDispatcher
     public function stop()
     {
         //@todo: implement
+    }
+
+    public function createOptions(int $timeout = 10)
+    {
+        return [
+            'connect_timeout' => $timeout,
+            'headers'         => array_merge(
+                [
+                    'UNLEASH-APPNAME'    => $this->appName,
+                    'UNLEASH-INSTANCEID' => $this->instanceId,
+                    'User-Agent'         => $this->appName,
+                ],
+                $this->headers
+            ),
+            'If-None-match'   => $this->etag,
+        ];
     }
 }

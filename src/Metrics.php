@@ -99,20 +99,7 @@ class Metrics extends EventDispatcher
         }
 
         $payload = $this->getClientData();
-        $options = [
-            'connect_timeout' => 1,//@todo: 10000 in Node we need to check how long this is seconds.
-            'headers'         => array_merge(
-                [
-                    'UNLEASH-APPNAME'    => $this->appName,
-                    'UNLEASH-INSTANCEID' => $this->instanceId,
-                    'User-Agent'         => $this->appName,
-                ],
-                $this->headers
-            ),
-            'json'            => $payload,
-        ];
-
-        //@todo: add dispatch for when the post gives a error
+        $options = $this->createCurlOptions($payload);
         $url = '/client/register';
         try {
             $response = $this->client->request('post', $url, $options);
@@ -145,18 +132,7 @@ class Metrics extends EventDispatcher
         }
 
         $payload = $this->getPayload();
-        $options = [
-            'connect_timeout' => 1,//@todo: 10000 in Node we need to check how long this is seconds.
-            'headers'         => array_merge(
-                [
-                    'UNLEASH-APPNAME'    => $this->appName,
-                    'UNLEASH-INSTANCEID' => $this->instanceId,
-                    'User-Agent'         => $this->appName,
-                ],
-                $this->headers
-            ),
-            'json'            => $payload,
-        ];
+        $options = $this->createCurlOptions($payload);
         $url = '/client/metrics';
         try {
             $response = $this->client->request('post', $url, $options);
@@ -245,6 +221,29 @@ class Metrics extends EventDispatcher
             'appName'    => $this->appName,
             'instanceId' => $this->instanceId,
             'bucket'     => (array)$this->bucket,
+        ];
+    }
+
+    /**
+     * @param array $payload JSON data
+     *
+     * @param int $timeout Connection timeout in seconds.
+     *
+     * @return array
+     */
+    public function createCurlOptions(array $payload, $timeout = 10)
+    {
+        return [
+            'connect_timeout' => $timeout,
+            'headers'         => array_merge(
+                [
+                    'UNLEASH-APPNAME'    => $this->appName,
+                    'UNLEASH-INSTANCEID' => $this->instanceId,
+                    'User-Agent'         => $this->appName,
+                ],
+                $this->headers
+            ),
+            'json'            => $payload,
         ];
     }
 }
