@@ -48,6 +48,10 @@ if ($unleashClient->isEnabled('amazing_feature')) {
 }
 ```
 
+## Usage with Unleash
+
+See https://unleash.github.io/ for details.
+
 ## Usage with Gitlab
 
 * Get an Gitlab Premium license or the open source contract on gitlab.com
@@ -56,6 +60,8 @@ if ($unleashClient->isEnabled('amazing_feature')) {
 * Create a new feature e.g. `amazing_feature`
 * Retrieve the API URL and Instance ID via the configure button
 * Configure your client and roll out the code
+
+See https://docs.gitlab.com/ee/user/project/operations/feature_flags.html for more details.
 
 ## Running the tests
 
