@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+if (!class_exists('Symfony\Component\Console\Command\Command')) {
+    die('Please install dev dependencies');
+}
+
+use Symfony\Component\Console\Application;
+
+$application = new Application();
+
+$application->add(new \Unleash\ClientExample\CacheAddCommand());
+$application->add(new \Unleash\ClientExample\CacheGetCommand());
+$application->add(new \Unleash\ClientExample\CacheClearCommand());
+$application->add(new \Unleash\ClientExample\CacheRemoveCommand());
+
+$application->run();
