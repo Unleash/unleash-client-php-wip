@@ -4,6 +4,8 @@ namespace Unleash\ClientExample;
 
 
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
+use Unleash\Context;
 
 class CheckFeatureStateCommand extends AbstractCacheCommand
 {
@@ -17,9 +19,10 @@ class CheckFeatureStateCommand extends AbstractCacheCommand
             // the full command description shown when running the command with
             // the "--help" option
             ->addArgument('appName', InputArgument::REQUIRED, 'App Name for Client')
-            ->addArgument('url', InputArgument::REQUIRED, 'App Name for Client')
-            ->addArgument('instance', InputArgument::OPTIONAL, 'App Name for Client', null)
-            ->addArgument('feature', InputArgument::OPTIONAL, 'App Name for Client', null)
+            ->addArgument('url', InputArgument::REQUIRED, 'API URL')
+            ->addArgument('instance', InputArgument::OPTIONAL, 'Instance', null)
+            ->addArgument('feature', InputArgument::OPTIONAL, 'feature name', null)
+            ->addOption('user', 'u', InputOption::VALUE_OPTIONAL , 'user', null)
             ->setHelp('');
     }
 
@@ -40,6 +43,12 @@ class CheckFeatureStateCommand extends AbstractCacheCommand
 
         // to retrieve the current state of the feature flags
         $unleashClient->fetch();
+
+        $context = new Context();
+
+        if ($input->getOption('user')) {
+            $context->userId = $input->getOption('user');
+        }
 
         // check if a feature is enabled
         if ($unleashClient->isEnabled($input->getArgument('feature'))) {
