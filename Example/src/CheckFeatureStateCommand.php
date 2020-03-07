@@ -42,7 +42,7 @@ class CheckFeatureStateCommand extends AbstractCacheCommand
         $unleashClient->fetch();
 
         // check if a feature is enabled
-        if ($unleashClient->isEnabled($unleashClient->isEnabled($input->getArgument('feature')))) {
+        if ($unleashClient->isEnabled($input->getArgument('feature'))) {
             echo '✅ feature is enabled';
         } else {
             echo '❌ feature is not enabled';

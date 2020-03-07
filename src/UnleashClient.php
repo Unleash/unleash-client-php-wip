@@ -82,16 +82,13 @@ class UnleashClient extends EventDispatcher
             return $feature->enabled;
         }
 
-        print_r($feature);
-
-        foreach ($feature->strategies as $strategySelector) {
-            $strategy = $this->getStrategy($strategySelector->name);
+        foreach ($feature->strategies as $strategy) {
             if ($strategy === null) {
-                $this->warnOnce($strategySelector->name, $name, $feature->strategies);
+                $this->warnOnce($strategy->name, $name, $feature->strategies);
                 continue;
             }
 
-            return $strategy->isEnabled($strategySelector->parameters, $context);
+            return $strategy->isEnabled($strategy->parameters, $context);
         }
 
         return false;

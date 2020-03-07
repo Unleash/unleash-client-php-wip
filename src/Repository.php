@@ -118,7 +118,7 @@ class Repository extends EventDispatcher
                 foreach ($row['strategies'] as $strategyData) {
                     $className = '\\Unleash\\Strategy\\' . ucfirst($strategyData['name']) . 'Strategy';
                     #if ($className instanceOf StrategyTransportInterface) {
-                        $feature->strategies[] = new $className(
+                        $feature->strategies[$strategyData['name']] = new $className(
                             $strategyData['name'],
                             $strategyData['parameters'] ?? null
                         );
