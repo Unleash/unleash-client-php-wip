@@ -82,6 +82,8 @@ class UnleashClient extends EventDispatcher
             return $feature->enabled;
         }
 
+        print_r($feature);
+
         foreach ($feature->strategies as $strategySelector) {
             $strategy = $this->getStrategy($strategySelector->name);
             if ($strategy === null) {

@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Unleash\Events\ErrorEvent;
+use Unleash\Strategy\DefaultStrategy;
 use Unleash\Strategy\StrategyTransportInterface;
 
 class Repository extends EventDispatcher
@@ -115,9 +116,14 @@ class Repository extends EventDispatcher
             $feature->strategies = [];
             if (isset($row['strategies'])) {
                 foreach ($row['strategies'] as $strategyData) {
-                    $feature->strategies = [new StrategyTransportInterface($strategyData['name'], $strategyData['parameters'] ?? null)];
+                    $className = '\\Unleash\\Strategy\\' . ucfirst($strategyData['name']) . 'Strategy';
+                    #if ($className instanceOf StrategyTransportInterface) {
+                        $feature->strategies[] = new $className(
+                            $strategyData['name'],
+                            $strategyData['parameters'] ?? null
+                        );
+                    #}
                 }
-
             }
             $features[$row['name']] = $feature;
         }
