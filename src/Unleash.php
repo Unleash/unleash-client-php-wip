@@ -45,7 +45,7 @@ class Unleash extends EventDispatcher
         string $appName,
         string $url,
         string $instanceId = null,
-        int $refreshInterval = 15 * 1000,
+        ?int $refreshInterval = 15 * 1000,
         int $metricsInterval = 50 * 1000,
         bool $disableMetrics = false,
         string $backupPath = '',//@todo: should be a tmp directory

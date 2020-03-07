@@ -15,5 +15,6 @@ $application->add(new \Unleash\ClientExample\CacheAddCommand());
 $application->add(new \Unleash\ClientExample\CacheGetCommand());
 $application->add(new \Unleash\ClientExample\CacheClearCommand());
 $application->add(new \Unleash\ClientExample\CacheRemoveCommand());
+$application->add(new \Unleash\ClientExample\CheckFeatureStateCommand());
 
 $application->run();
