@@ -123,7 +123,7 @@ class Unleash extends EventDispatcher
             $customHeaders,
             $metricsInterval,
             $disableMetrics,
-            $this->client
+            $client
         );
 
         $this->metrics->addListener('error', function (ErrorEvent $event) {
