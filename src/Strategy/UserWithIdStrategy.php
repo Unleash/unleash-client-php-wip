@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Unleash\Strategy;
 
@@ -13,11 +14,16 @@ class UserWithIdStrategy extends Strategy
 
     public function isEnabled(array $parameters = null, Context $context = null): bool
     {
+        if ($context === null) {
+            return false;
+        }
+
         if (!isset($parameters['userIds'])) {
             return false;
         }
 
         $userIds = array_map('trim', explode(',', $parameters['userIds']));
-        return in_array($context->userId, $userIds);
+        return in_array($context->userId, $userIds, false);
+
     }
 }

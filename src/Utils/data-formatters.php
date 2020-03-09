@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 if (!function_exists('toNewFormat')) {
     /**
@@ -13,7 +13,7 @@ if (!function_exists('toNewFormat')) {
             $feature = new Unleash\Feature();
             $feature->name = $row['name'];
             $feature->enabled = $row['enabled'];
-            $feature->strategies = [new StrategyTransportInterface($row['strategy'], $row['parameters'])];
+            $feature->strategies = [new \Unleash\Strategy\StrategyTransportInterface($row['strategy'], $row['parameters'])];
         }
 
         return [

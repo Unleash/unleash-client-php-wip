@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Unleash;
 
@@ -45,7 +46,7 @@ class Unleash extends EventDispatcher
         string $appName,
         string $url,
         string $instanceId = null,
-        int $refreshInterval = 15 * 1000,
+        ?int $refreshInterval = 15 * 1000,
         int $metricsInterval = 50 * 1000,
         bool $disableMetrics = false,
         string $backupPath = '',//@todo: should be a tmp directory
@@ -68,7 +69,7 @@ class Unleash extends EventDispatcher
         if ($instanceId === null) {
             $info = posix_getpwuid(posix_geteuid());
 
-            $prefix = $info['username'] ?? 'generated-' . round((mt_rand() / mt_getrandmax() * 1000000)) . '-' . getmypid();
+            $prefix = $info['username'] ?? ('generated-' . round((mt_rand() / mt_getrandmax() * 1000000)) . '-' . getmypid());
             $instanceId = $prefix . '-' . $_SERVER['host_name'];
         }
 
@@ -122,7 +123,7 @@ class Unleash extends EventDispatcher
             $customHeaders,
             $metricsInterval,
             $disableMetrics,
-            $this->client
+            $client
         );
 
         $this->metrics->addListener('error', function (ErrorEvent $event) {

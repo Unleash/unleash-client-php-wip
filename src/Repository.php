@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Unleash;
 
@@ -7,6 +8,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Unleash\Events\ErrorEvent;
+use Unleash\Strategy\DefaultStrategy;
 use Unleash\Strategy\StrategyTransportInterface;
 
 class Repository extends EventDispatcher
@@ -112,7 +114,18 @@ class Repository extends EventDispatcher
             $feature = new Feature();
             $feature->name = $row['name'];
             $feature->enabled = $row['enabled'];
-            $feature->strategies = [new StrategyTransportInterface($row['strategy'], $row['parameters'] ?? null)];
+            $feature->strategies = [];
+            if (isset($row['strategies'])) {
+                foreach ($row['strategies'] as $strategyData) {
+                    $className = '\\Unleash\\Strategy\\' . ucfirst($strategyData['name']) . 'Strategy';
+                    #if ($className instanceOf StrategyTransportInterface) {
+                        $feature->strategies[$strategyData['name']] = new $className(
+                            $strategyData['name'],
+                            $strategyData['parameters'] ?? null
+                        );
+                    #}
+                }
+            }
             $features[$row['name']] = $feature;
         }
 
