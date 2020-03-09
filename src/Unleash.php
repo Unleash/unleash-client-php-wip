@@ -69,7 +69,7 @@ class Unleash extends EventDispatcher
         if ($instanceId === null) {
             $info = posix_getpwuid(posix_geteuid());
 
-            $prefix = $info['username'] ?? 'generated-' . round((mt_rand() / mt_getrandmax() * 1000000)) . '-' . getmypid();
+            $prefix = $info['username'] ?? ('generated-' . round((mt_rand() / mt_getrandmax() * 1000000)) . '-' . getmypid());
             $instanceId = $prefix . '-' . $_SERVER['host_name'];
         }
 
