@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Unleash\Strategy;
 
@@ -21,6 +22,6 @@ class ApplicationHostnameStrategy extends Strategy
             return false;
         }
 
-        return in_array($this->hostname, array_map('trim', explode(',', strtolower($parameters['hostNames']))));
+        return in_array($this->hostname, array_map('trim', explode(',', strtolower($parameters['hostNames']))), true);
     }
 }

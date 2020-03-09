@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 if (!function_exists('normalizeValue')) {
     function normalizeValue(string $id, string $groupId, $normalizer = 100): int
