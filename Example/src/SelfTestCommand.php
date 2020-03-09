@@ -66,6 +66,24 @@ class SelfTestCommand extends AbstractCacheCommand
     {
         // client
         $unleashClient = new \Unleash\Unleash;
+        $unleashClient->addListener(
+            'warn',
+            static function ($event, $eventName, $source) use ($output) {
+                $output->writeln(print_r($event, true));
+            }
+        );
+        $unleashClient->addListener(
+            'ready',
+            static function ($event, $eventName, $source) use ($output) {
+                $output->writeln(print_r($event, true));
+            }
+        );
+        $unleashClient->addListener(
+            'error',
+            static function ($event, $eventName, $source) use ($output) {
+                $output->writeln(print_r($event, true));
+            }
+        );
         $unleashClient->initialize(
             'self-test',
             $uri,
@@ -74,12 +92,13 @@ class SelfTestCommand extends AbstractCacheCommand
         );
         $unleashClient->fetch();
 
+
         // fetch testdata
         $testData = json_decode(file_get_contents($uri), true);
 
         // test
 
-        $output->writeln($testData['name']);
+        $output->writeln($testData['name'] . ' from ' . $uri);
 
         foreach ($testData['tests'] as $test) {
             $output->writeln('  ' . $test['description']);
