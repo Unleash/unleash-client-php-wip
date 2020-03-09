@@ -17,15 +17,18 @@ class UnleashClient extends EventDispatcher
      * UnleashClient constructor.
      * @param Repository $repository
      * @param Strategy[] $strategies
+     * @throws \Exception
      */
     public function __construct(Repository $repository, array $strategies = [])
     {
+        parent::__construct();
+
         $this->repository = $repository;
         $this->strategies = $strategies;
 
         foreach ($strategies as $strategy) {
             if (!$strategy instanceof Strategy) {
-                throw new \Exception('Invalid strategy data / interface');
+                throw new \InvalidArgumentException('Invalid strategy data / interface');
             }
         }
     }
@@ -54,15 +57,15 @@ class UnleashClient extends EventDispatcher
             $this->warned[$missingStrategy . $name] = true;
 
             $strategyNames = implode(
-                ", ",
+                ', ',
                 array_map(
-                    function (StrategyTransportInterface $strategy) {
+                    static function (StrategyTransportInterface $strategy) {
                         return $strategy->name;
                     },
                     $strategies
                 )
             );
-            $this->dispatch('warn', new WarnEvent("Missing strategy " . $missingStrategy . " for toggle " . $name . ". Ensure that " . $strategyNames . " are supported before using this toggle"));
+            $this->dispatch('warn', new WarnEvent('Missing strategy ' . $missingStrategy . ' for toggle ' . $name . '. Ensure that ' . $strategyNames . ' are supported before using this toggle'));
         }
     }
 
@@ -117,16 +120,16 @@ class UnleashClient extends EventDispatcher
 
     public function destroy()
     {
-        throw new \Exception("Not implemented", 1);
+        throw new \Exception('Not implemented', 1);
     }
 
     public function getFeatureToggleDefinition($toggleName)
     {
-        throw new \Exception("Not implemented", 1);
+        throw new \Exception('Not implemented', 1);
     }
 
     public function count($toggleName, $enabled)
     {
-        throw new \Exception("Not implemented", 1);
+        throw new \Exception('Not implemented', 1);
     }
 }
