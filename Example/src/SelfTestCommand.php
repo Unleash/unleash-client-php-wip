@@ -56,7 +56,7 @@ class SelfTestCommand extends AbstractCacheCommand
 
 
         foreach ($relativeUris as $relativeUri) {
-            $absoluteUris[] = $baseUri . '/' . $relativeUri;
+            $absoluteUris[] = $baseUri . '/' . $relativeUri . '?';
         }
 
         return $absoluteUris;
