@@ -1,5 +1,5 @@
 # unleash-client-php
-PHP client for Unleash
+PHP client for Unleash.
 
 ## Important
 
