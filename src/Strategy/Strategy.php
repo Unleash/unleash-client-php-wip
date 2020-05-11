@@ -16,7 +16,7 @@ class Strategy extends StrategyTransportInterface
         $this->returnValue = $returnValue;
     }
 
-    public function isEnabled(array $parameters = null, Context $context = null): bool
+    public function isEnabled(array $parameters = null, Context $context = null)
     {
         return $this->returnValue;
     }

@@ -141,7 +141,7 @@ class CustomStrategy extends Strategy
         parent::__construct('custom');
     }
 
-    public function isEnabled(array $parameters = null, Context $context = null): bool
+    public function isEnabled(array $parameters = null, Context $context = null)
     {
         return true;
     }
@@ -154,7 +154,7 @@ class CustomFalseStrategy extends Strategy
         parent::__construct('custom-false');
     }
 
-    public function isEnabled(array $parameters = null, Context $context = null): bool
+    public function isEnabled(array $parameters = null, Context $context = null)
     {
         return false;
     }

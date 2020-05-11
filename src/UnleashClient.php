@@ -66,7 +66,7 @@ class UnleashClient extends EventDispatcher
         }
     }
 
-    public function isEnabled(string $name, Context $context = null, bool $fallbackValue = null): bool
+    public function isEnabled(string $name, Context $context = null, bool $fallbackValue = null)
     {
         $feature = $this->repository->getToggle($name);
 

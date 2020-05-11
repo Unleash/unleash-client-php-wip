@@ -42,13 +42,13 @@ class Unleash extends EventDispatcher
      * @param Client|null $client
      */
     public function initialize(
-        string $appName,
-        string $url,
-        string $instanceId = null,
-        int $refreshInterval = 15 * 1000,
-        int $metricsInterval = 50 * 1000,
-        bool $disableMetrics = false,
-        string $backupPath = '',//@todo: should be a tmp directory
+        $appName,
+        $url,
+        $instanceId = null,
+        $refreshInterval = 15 * 1000,
+        $metricsInterval = 50 * 1000,
+        $disableMetrics = false,
+        $backupPath = '',//@todo: should be a tmp directory
         array $strategies = [],
         array $customHeaders = [],
         Client $client = null

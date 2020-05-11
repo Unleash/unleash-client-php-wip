@@ -22,11 +22,11 @@ class Repository extends EventDispatcher
     private $etag = 'unknown';
 
     public function __construct(
-        string $backupPath,
-        string $url,
-        string $appName,
-        string $instanceId,
-        string $refreshInterval = null,
+        $backupPath,
+        $url,
+        $appName,
+        $instanceId,
+        $refreshInterval = null,
         array $headers = [],
         Storage $storageImpl = null,
         Client $client = null
@@ -105,7 +105,7 @@ class Repository extends EventDispatcher
         $this->dispatch('data');
     }
 
-    public function pickData(array $data): array
+    public function pickData(array $data)
     {
         $features = [];
         foreach ($data['features'] as $row) {
