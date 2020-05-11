@@ -18,7 +18,7 @@ class ErrorEvent extends Event
         return $this->err;
     }
 
-    public function setError(string $error)
+    public function setError($error)
     {
         $this->err = $error;
     }

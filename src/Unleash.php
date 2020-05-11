@@ -42,13 +42,13 @@ class Unleash extends EventDispatcher
      * @param Client|null $client
      */
     public function initialize(
-        string $appName,
-        string $url,
-        string $instanceId = null,
-        int $refreshInterval = 15 * 1000,
-        int $metricsInterval = 50 * 1000,
-        bool $disableMetrics = false,
-        string $backupPath = '',//@todo: should be a tmp directory
+        $appName,
+        $url,
+        $instanceId = null,
+        $refreshInterval = 15 * 1000,
+        $metricsInterval = 50 * 1000,
+        $disableMetrics = false,
+        $backupPath = '',//@todo: should be a tmp directory
         array $strategies = [],
         array $customHeaders = [],
         Client $client = null
@@ -68,7 +68,9 @@ class Unleash extends EventDispatcher
         if ($instanceId === null) {
             $info = posix_getpwuid(posix_geteuid());
 
-            $prefix = $info['username'] ?? 'generated-' . round((mt_rand() / mt_getrandmax() * 1000000)) . '-' . getmypid();
+            $prefix = isset($info['username'])
+                ? $info['username']
+                : 'generated-' . round((mt_rand() / mt_getrandmax() * 1000000)) . '-' . getmypid();
             $instanceId = $prefix . '-' . $_SERVER['host_name'];
         }
 
@@ -152,7 +154,7 @@ class Unleash extends EventDispatcher
         $this->repository->fetch();
     }
 
-    public function isEnabled(string $name, Context $context = null, bool $fallbackValue = null)
+    public function isEnabled($name, Context $context = null, $fallbackValue = null)
     {
         $result = null;
         if ($this->client !== null) {
@@ -168,7 +170,7 @@ class Unleash extends EventDispatcher
         return $result;
     }
 
-    public function count(string $toggleName, bool $enabled)
+    public function count($toggleName, $enabled)
     {
         $this->metrics->count($toggleName, $enabled);
     }

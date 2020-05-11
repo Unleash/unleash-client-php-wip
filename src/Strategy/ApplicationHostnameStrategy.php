@@ -12,10 +12,10 @@ class ApplicationHostnameStrategy extends Strategy
     public function __construct()
     {
         parent::__construct('applicationHostname');
-        $this->hostname = strtolower($_SERVER['host_name'] ?? 'undefined');
+        $this->hostname = strtolower(isset($_SERVER['host_name']) ? $_SERVER['host_name'] : 'undefined');
     }
 
-    public function isEnabled(array $parameters = null, Context $context = null): bool
+    public function isEnabled(array $parameters = null, Context $context = null)
     {
         if (!isset($parameters['hostNames'])) {
             return false;

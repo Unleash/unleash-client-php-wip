@@ -11,7 +11,7 @@ class DefaultStrategy extends Strategy
         parent::__construct('default');
     }
 
-    public function isEnabled(array $parameters = null, Context $context = null): bool
+    public function isEnabled(array $parameters = null, Context $context = null)
     {
         return true;
     }

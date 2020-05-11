@@ -11,14 +11,14 @@ class GradualRolloutUserIdStrategy extends Strategy
         parent::__construct('gradualRolloutUserId');
     }
 
-    public function isEnabled(array $parameters = null, Context $context = null): bool
+    public function isEnabled(array $parameters = null, Context $context = null)
     {
         if (empty($context->userId) || !isset($parameters['percentage'])) {
             return false;
         }
 
         $percentage = (int)$parameters['percentage'];
-        $groupId = $parameters['groupId'] ?? '';
+        $groupId = isset($parameters['groupId']) ? $parameters['groupId'] : '';
         $normalizedUserId = normalizeValue($context->userId, $groupId);
         return $percentage > 0 && $normalizedUserId <= $percentage;
     }

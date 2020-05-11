@@ -22,11 +22,11 @@ class Repository extends EventDispatcher
     private $etag = 'unknown';
 
     public function __construct(
-        string $backupPath,
-        string $url,
-        string $appName,
-        string $instanceId,
-        string $refreshInterval = null,
+        $backupPath,
+        $url,
+        $appName,
+        $instanceId,
+        $refreshInterval = null,
         array $headers = [],
         Storage $storageImpl = null,
         Client $client = null
@@ -105,14 +105,14 @@ class Repository extends EventDispatcher
         $this->dispatch('data');
     }
 
-    public function pickData(array $data): array
+    public function pickData(array $data)
     {
         $features = [];
         foreach ($data['features'] as $row) {
             $feature = new Feature();
             $feature->name = $row['name'];
             $feature->enabled = $row['enabled'];
-            $feature->strategies = [new StrategyTransportInterface($row['strategy'], $row['parameters'] ?? null)];
+            $feature->strategies = [new StrategyTransportInterface($row['strategy'], isset($row['parameters']) ? $row['parameters'] : null)];
             $features[$row['name']] = $feature;
         }
 
@@ -122,7 +122,7 @@ class Repository extends EventDispatcher
         ];
     }
 
-    public function getToggle(string $name): ?FeatureInterface
+    public function getToggle($name)
     {
         return $this->storage->get($name);
     }
@@ -132,7 +132,7 @@ class Repository extends EventDispatcher
         //@todo: implement
     }
 
-    public function createOptions(int $timeout = 10)
+    public function createOptions($timeout = 10)
     {
         return [
             'connect_timeout' => $timeout,

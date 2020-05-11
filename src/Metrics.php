@@ -30,13 +30,13 @@ class Metrics extends EventDispatcher
 
 
     public function __construct(
-        string $appName,
-        string $instanceId,
+        $appName,
+        $instanceId,
         array $strategies,
-        string $url,
+        $url,
         array $headers,
-        float $metricsInterval = 0,
-        bool $disableMetrics = false,
+        $metricsInterval = 0,
+        $disableMetrics = false,
         Client $client = null
     ) {
         $this->disabled = $disableMetrics;
@@ -92,7 +92,7 @@ class Metrics extends EventDispatcher
         $this->disabled = true;
     }
 
-    public function registerInstance(): bool
+    public function registerInstance()
     {
         if ($this->disabled) {
             return false;
@@ -120,7 +120,7 @@ class Metrics extends EventDispatcher
         return true;
     }
 
-    public function sendMetrics(): bool
+    public function sendMetrics()
     {
         if ($this->disabled) {
             return false;
@@ -158,7 +158,7 @@ class Metrics extends EventDispatcher
         return true;
     }
 
-    public function count(string $name = null, bool $enabled = false): bool
+    public function count($name = null, $enabled = false)
     {
         if ($this->disabled) {
             return false;

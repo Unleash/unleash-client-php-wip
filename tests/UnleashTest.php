@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use PHPUnit\Framework\Assert;
+use PHPUnit_Framework_Assert as Assert;
 use PHPUnit\Framework\TestCase;
 use Unleash\Events\CountEvent;
 use Unleash\Events\ErrorEvent;

@@ -10,13 +10,13 @@ class Strategy extends StrategyTransportInterface
     private $returnValue;
     public $parameters;
 
-    public function __construct(string $name = 'unknown', bool $returnValue = false)
+    public function __construct($name = 'unknown', $returnValue = false)
     {
         $this->name = $name;
         $this->returnValue = $returnValue;
     }
 
-    public function isEnabled(array $parameters = null, Context $context = null): bool
+    public function isEnabled(array $parameters = null, Context $context = null)
     {
         return $this->returnValue;
     }

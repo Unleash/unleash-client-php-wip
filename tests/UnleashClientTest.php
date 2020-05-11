@@ -119,7 +119,7 @@ class UnleashClientTest extends TestCase
         $this->assertEquals(1, $amountOfEvents);
     }
 
-    public function createFeature(string $name, bool $enabled, array $strategies = [])
+    public function createFeature($name, $enabled, array $strategies = [])
     {
         if (empty($strategies)) {
             $strategies = [
@@ -136,12 +136,12 @@ class UnleashClientTest extends TestCase
 
 class CustomStrategy extends Strategy
 {
-    public function __construct(string $name = 'unknown', bool $returnValue = false)
+    public function __construct($name = 'unknown', $returnValue = false)
     {
         parent::__construct('custom');
     }
 
-    public function isEnabled(array $parameters = null, Context $context = null): bool
+    public function isEnabled(array $parameters = null, Context $context = null)
     {
         return true;
     }
@@ -149,12 +149,12 @@ class CustomStrategy extends Strategy
 
 class CustomFalseStrategy extends Strategy
 {
-    public function __construct(string $name = 'unknown', bool $returnValue = false)
+    public function __construct($name = 'unknown', $returnValue = false)
     {
         parent::__construct('custom-false');
     }
 
-    public function isEnabled(array $parameters = null, Context $context = null): bool
+    public function isEnabled(array $parameters = null, Context $context = null)
     {
         return false;
     }

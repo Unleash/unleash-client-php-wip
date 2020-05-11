@@ -30,7 +30,7 @@ class UnleashClient extends EventDispatcher
         }
     }
 
-    private function getStrategy(string $name): ?Strategy
+    private function getStrategy($name)
     {
         $match = null;
         foreach ($this->strategies as $strategy) {
@@ -48,7 +48,7 @@ class UnleashClient extends EventDispatcher
      * @param string $name
      * @param StrategyTransportInterface[] $strategies
      */
-    public function warnOnce(string $missingStrategy, string $name, array $strategies)
+    public function warnOnce($missingStrategy, $name, array $strategies)
     {
         if (!isset($this->warned[$missingStrategy . $name])) {
             $this->warned[$missingStrategy . $name] = true;
@@ -66,7 +66,7 @@ class UnleashClient extends EventDispatcher
         }
     }
 
-    public function isEnabled(string $name, Context $context = null, bool $fallbackValue = null): bool
+    public function isEnabled($name, Context $context = null, $fallbackValue = null)
     {
         $feature = $this->repository->getToggle($name);
 

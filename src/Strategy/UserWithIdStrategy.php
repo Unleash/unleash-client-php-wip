@@ -11,7 +11,7 @@ class UserWithIdStrategy extends Strategy
         parent::__construct('userWithId');
     }
 
-    public function isEnabled(array $parameters = null, Context $context = null): bool
+    public function isEnabled(array $parameters = null, Context $context = null)
     {
         if (!isset($parameters['userIds'])) {
             return false;
