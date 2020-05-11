@@ -112,7 +112,7 @@ class Repository extends EventDispatcher
             $feature = new Feature();
             $feature->name = $row['name'];
             $feature->enabled = $row['enabled'];
-            $feature->strategies = [new StrategyTransportInterface($row['strategy'], $row['parameters'] ?? null)];
+            $feature->strategies = [new StrategyTransportInterface($row['strategy'], isset($row['parameters']) ? $row['parameters'] : null)];
             $features[$row['name']] = $feature;
         }
 
@@ -122,7 +122,7 @@ class Repository extends EventDispatcher
         ];
     }
 
-    public function getToggle(string $name): ?FeatureInterface
+    public function getToggle($name)
     {
         return $this->storage->get($name);
     }
@@ -132,7 +132,7 @@ class Repository extends EventDispatcher
         //@todo: implement
     }
 
-    public function createOptions(int $timeout = 10)
+    public function createOptions($timeout = 10)
     {
         return [
             'connect_timeout' => $timeout,

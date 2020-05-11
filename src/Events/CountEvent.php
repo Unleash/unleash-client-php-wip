@@ -9,7 +9,7 @@ class CountEvent extends Event
     private $name;
     private $enabled;
 
-    public function __construct(string $name, bool $enabled)
+    public function __construct($name, $enabled)
     {
         $this->name = $name;
         $this->enabled = $enabled;

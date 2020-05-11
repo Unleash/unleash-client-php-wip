@@ -12,18 +12,18 @@ class Storage extends EventDispatcher
     private $data = [];
     private $path;
 
-    public function __construct(string $backupPath, string $appName)
+    public function __construct($backupPath, $appName)
     {
         $this->path = $backupPath . '/unleash/repo/schema-v1-' . $this->safeAppName($appName) . '.json';
         $this->load();
     }
 
-    public function safeAppName(string $appName)
+    public function safeAppName($appName)
     {
         return str_replace('/', '_', $appName);
     }
 
-    public function reset(array $features, bool $doPersist = true)
+    public function reset(array $features, $doPersist = true)
     {
         $doEmitReady = $this->ready === false;
         $this->ready = true;
@@ -37,9 +37,9 @@ class Storage extends EventDispatcher
         }
     }
 
-    public function get(string $key): ?FeatureInterface
+    public function get($key)
     {
-        return $this->data[$key] ?? null;
+        return isset($this->data[$key]) ? $this->data[$key] : null;
     }
 
     public function persist()

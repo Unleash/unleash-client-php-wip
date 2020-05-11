@@ -158,7 +158,7 @@ class Metrics extends EventDispatcher
         return true;
     }
 
-    public function count(string $name = null, bool $enabled = false)
+    public function count($name = null, $enabled = false)
     {
         if ($this->disabled) {
             return false;

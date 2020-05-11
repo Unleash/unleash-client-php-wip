@@ -18,7 +18,7 @@ class GradualRolloutSessionIdStrategy extends Strategy
         }
 
         $percentage = (int)$parameters['percentage'];
-        $groupId = $parameters['groupId'] ?? '';
+        $groupId = isset($parameters['groupId']) ? $parameters['groupId'] : '';
         $normalizedId = normalizeValue($context->sessionId, $groupId);
 
         return $percentage > 0 && $normalizedId <= $percentage;
