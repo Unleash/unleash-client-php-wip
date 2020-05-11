@@ -35,7 +35,7 @@ class Metrics extends EventDispatcher
         array $strategies,
         $url,
         array $headers,
-        float $metricsInterval = 0,
+        $metricsInterval = 0,
         $disableMetrics = false,
         Client $client = null
     ) {
