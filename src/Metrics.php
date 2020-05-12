@@ -72,22 +72,22 @@ class Metrics extends EventDispatcher
             return false;
         }
 
-        $this->timer = new \EvTimer($this->metricsInterval, 0, function () {
+//        $this->timer = new \EvTimer($this->metricsInterval, 0, function () {
             $this->sendMetrics();
-        });
-
-        if (getenv('env') !== 'test') {
-            \Ev::run(\Ev::RUN_NOWAIT);
-        } else {
-            \Ev::run();
-        }
+//        });
+//
+//        if (getenv('env') !== 'test') {
+//            \Ev::run(\Ev::RUN_NOWAIT);
+//        } else {
+//            \Ev::run();
+//        }
 
         return true;
     }
 
     public function stop()
     {
-        \Ev::stop();
+//        \Ev::stop();
         $this->timer = null;
         $this->disabled = true;
     }

@@ -5,7 +5,6 @@
   "license": "Apache-2.0",
   "require": {
     "php": "^5.6.0",
-    "ext-ev": "*",
     "ext-json": "*",
     "ext-pcntl": "*",
     "ext-posix": "*",

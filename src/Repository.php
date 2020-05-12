@@ -61,14 +61,14 @@ class Repository extends EventDispatcher
     public function timedFetch()
     {
         if ($this->refreshInterval !== null && $this->refreshInterval > 0) {
-            $this->timer = new \EvTimer($this->refreshInterval, 0, function () {
+//            $this->timer = new \EvTimer($this->refreshInterval, 0, function () {
                 $this->fetch();
-            });
-            if (getenv('env') !== 'test') {
-                \Ev::run(\Ev::RUN_NOWAIT);
-            } else {
-                \Ev::run();
-            }
+//            });
+//            if (getenv('env') !== 'test') {
+//                \Ev::run(\Ev::RUN_NOWAIT);
+//            } else {
+//                \Ev::run();
+//            }
         }
     }
 
