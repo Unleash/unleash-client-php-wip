@@ -30,7 +30,8 @@ class Repository extends EventDispatcher
         array $headers = [],
         Storage $storageImpl = null,
         Client $client = null
-    ) {
+    )
+    {
         if ($client === null) {
             $this->client = new Client([
                 'base_uri' => $url,
@@ -61,14 +62,7 @@ class Repository extends EventDispatcher
     public function timedFetch()
     {
         if ($this->refreshInterval !== null && $this->refreshInterval > 0) {
-//            $this->timer = new \EvTimer($this->refreshInterval, 0, function () {
-                $this->fetch();
-//            });
-//            if (getenv('env') !== 'test') {
-//                \Ev::run(\Ev::RUN_NOWAIT);
-//            } else {
-//                \Ev::run();
-//            }
+            $this->fetch();
         }
     }
 
@@ -117,7 +111,7 @@ class Repository extends EventDispatcher
         }
 
         return [
-            'version'  => 1,
+            'version' => 1,
             'features' => $features,
         ];
     }
@@ -136,15 +130,15 @@ class Repository extends EventDispatcher
     {
         return [
             'connect_timeout' => $timeout,
-            'headers'         => array_merge(
+            'headers' => array_merge(
                 [
-                    'UNLEASH-APPNAME'    => $this->appName,
+                    'UNLEASH-APPNAME' => $this->appName,
                     'UNLEASH-INSTANCEID' => $this->instanceId,
-                    'User-Agent'         => $this->appName,
+                    'User-Agent' => $this->appName,
                 ],
                 $this->headers
             ),
-            'If-None-match'   => $this->etag,
+            'If-None-match' => $this->etag,
         ];
     }
 }
