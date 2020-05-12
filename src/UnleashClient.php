@@ -89,7 +89,9 @@ class UnleashClient extends EventDispatcher
                 continue;
             }
 
-            return $strategy->isEnabled($strategySelector->parameters, $context);
+            if  ($strategy->isEnabled($strategySelector->parameters, $context)) {
+                return true;
+            }
         }
 
         return false;

@@ -132,6 +132,43 @@ class UnleashClientTest extends TestCase
 
         return $feature;
     }
+
+    /**
+     * Scenario: feature has 3 strategies:
+     *
+     * 1. first strategy not in client's initialized strategies
+     * 2. second strategy is enabled
+     * 3. third strategy is disabled
+     * @throws \Exception
+     */
+    public function testIsEnabledReturnsTrueOnFirstEnabledStrategy() {
+        $featureName = 'has-one-good-strategy-rest-are-rubbish';
+        $strategyEnabled = new Strategy('enabled', true);
+        $strategyDisabled = new Strategy('disabled', false);
+
+        $repo = $this->createMock(Repository::class);
+        $repo->method('getToggle')
+            ->willReturn($this->createFeature(
+                $featureName,
+                true,
+                [
+                    new Strategy('not-mapped', true),
+                    $strategyDisabled,
+                    $strategyEnabled,
+                ]
+            ));
+
+
+        $warned = [];
+        $client = new UnleashClient($repo, [$strategyEnabled, $strategyDisabled]);
+        $client->addListener('warn', function (WarnEvent $event) use (&$warned) {
+            $warned[] = $event->getMessage();
+        });
+
+        $this->assertTrue($client->isEnabled($featureName));
+        $this->assertCount(1, $warned);
+        $this->assertStringStartsWith('Missing strategy not-mapped', $warned[0]);
+    }
 }
 
 class CustomStrategy extends Strategy
