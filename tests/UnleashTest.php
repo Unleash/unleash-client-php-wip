@@ -19,17 +19,19 @@ class UnleashTest extends TestCase
 {
     public function mockNetwork(array $toggles = null)
     {
-        if($toggles === null){
+        if ($toggles === null) {
             $toggles[] = [
                 'name' => 'feature',
                 'enabled' => true,
-                'strategy' => 'default'
+                'strategy' => 'default',
             ];
         }
 
-        $mock = new MockHandler([
-            new Response(200, [], json_encode(['features' => $toggles]))
-        ]);
+        $mock = new MockHandler(
+            [
+                new Response(200, [], json_encode(['features' => $toggles])),
+            ]
+        );
 
         $client = new Client(['handler' => HandlerStack::create($mock)]);
         return $client;
@@ -38,18 +40,21 @@ class UnleashTest extends TestCase
     public function testShouldHandleOldUrl()
     {
         $instance = new \Unleash\Unleash();
-        $instance->addListener('warn', function (WarnEvent $event) {
-            $this->assertNotNull($event);
-        });
+        $instance->addListener(
+            'warn',
+            function (WarnEvent $event) {
+                $this->assertNotNull($event);
+            }
+        );
 
-        $instance->initialize('foo',
+        $instance->initialize(
+            'foo',
             'http://test.nl/client/features',
             null,
             0,
             0,
             true
         );
-
 
         $instance->destroy();
     }
@@ -58,11 +63,15 @@ class UnleashTest extends TestCase
     {
         $baseUrl = 'http://ttest.app/api';
         $instance = new \Unleash\Unleash();
-        $instance->addListener('warn', function (WarnEvent $event) {
-            $this->assertNotNull($event);
-        });
+        $instance->addListener(
+            'warn',
+            function (WarnEvent $event) {
+                $this->assertNotNull($event);
+            }
+        );
 
-        $instance->initialize('foo',
+        $instance->initialize(
+            'foo',
             $baseUrl,
             null,
             0,
@@ -78,12 +87,16 @@ class UnleashTest extends TestCase
         $baseUrl = 'http://ttest.app/api';
         $instance = new \Unleash\Unleash();
         $amountOfErrors = 0;
-        $instance->addListener('error', function (ErrorEvent $event) use (&$amountOfErrors) {
-            $this->assertNotNull($event);
-            $amountOfErrors++;
-        });
+        $instance->addListener(
+            'error',
+            function (ErrorEvent $event) use (&$amountOfErrors) {
+                $this->assertNotNull($event);
+                $amountOfErrors++;
+            }
+        );
 
-        $instance->initialize('foo',
+        $instance->initialize(
+            'foo',
             $baseUrl,
             null,
             0,
@@ -92,8 +105,12 @@ class UnleashTest extends TestCase
         );
         Assert::readAttribute($instance, 'repository')->dispatch('error', new ErrorEvent(['message' => 'error']));
         Assert::readAttribute($instance, 'metrics')->dispatch('error', new ErrorEvent(['message' => 'error']));
-        Assert::readAttribute(Assert::readAttribute($instance, 'repository'), 'storage')->dispatch('error', new ErrorEvent(['message' => 'error']));
-
+        Assert::readAttribute(Assert::readAttribute($instance, 'repository'), 'storage')->dispatch(
+            'error',
+            new ErrorEvent(
+                ['message' => 'error']
+            )
+        );
 
         $this->assertEquals(3, $amountOfErrors);
     }
@@ -103,24 +120,37 @@ class UnleashTest extends TestCase
         $baseUrl = 'http://ttest.app/api';
         $instance = new \Unleash\Unleash();
         $amountOfEvents = 0;
-        $instance->addListener('warn', function (WarnEvent $event) use (&$amountOfEvents) {
-            $this->assertNotNull($event);
-            $amountOfEvents++;
-        });
-        $instance->addListener('sent', function (SentEvent $event) use (&$amountOfEvents) {
-            $this->assertNotNull($event);
-            $amountOfEvents++;
-        });
-        $instance->addListener('registered', function (RegisterEvent $event) use (&$amountOfEvents) {
-            $this->assertNotNull($event);
-            $amountOfEvents++;
-        });
-        $instance->addListener('count', function (CountEvent $event) use (&$amountOfEvents) {
-            $this->assertNotNull($event);
-            $amountOfEvents++;
-        });
+        $instance->addListener(
+            'warn',
+            function (WarnEvent $event) use (&$amountOfEvents) {
+                $this->assertNotNull($event);
+                $amountOfEvents++;
+            }
+        );
+        $instance->addListener(
+            'sent',
+            function (SentEvent $event) use (&$amountOfEvents) {
+                $this->assertNotNull($event);
+                $amountOfEvents++;
+            }
+        );
+        $instance->addListener(
+            'registered',
+            function (RegisterEvent $event) use (&$amountOfEvents) {
+                $this->assertNotNull($event);
+                $amountOfEvents++;
+            }
+        );
+        $instance->addListener(
+            'count',
+            function (CountEvent $event) use (&$amountOfEvents) {
+                $this->assertNotNull($event);
+                $amountOfEvents++;
+            }
+        );
 
-        $instance->initialize('foo',
+        $instance->initialize(
+            'foo',
             $baseUrl,
             null,
             0,
@@ -133,7 +163,6 @@ class UnleashTest extends TestCase
         Assert::readAttribute($instance, 'metrics')->dispatch('registered', new RegisterEvent([]));
         Assert::readAttribute($instance, 'metrics')->dispatch('count', new CountEvent('test', true));
 
-
         $this->assertEquals(5, $amountOfEvents);
     }
 
@@ -143,19 +172,28 @@ class UnleashTest extends TestCase
         $instance = new \Unleash\Unleash();
 
         $amountOfEvents = 0;
-        $instance->addListener('error', function (ErrorEvent $event) use (&$amountOfEvents){
-            $this->assertContains('failed to open stream: No such file or directory', $event->getError()['message']);
-            $amountOfEvents++;
-        });
+        $instance->addListener(
+            'error',
+            function (ErrorEvent $event) use (&$amountOfEvents) {
+                $this->assertContains(
+                    'failed to open stream: No such file or directory',
+                    $event->getError()['message']
+                );
+                $amountOfEvents++;
+            }
+        );
 
-        $mock = new MockHandler([
-            new Response(200, [], json_encode(['features' => []]))
-        ]);
+        $mock = new MockHandler(
+            [
+                new Response(200, [], json_encode(['features' => []])),
+            ]
+        );
 
         $client = new Client(['handler' => HandlerStack::create($mock)]);
         $backupPath = sys_get_temp_dir() . '/test-tmp';
 
-        $instance->initialize('foo',
+        $instance->initialize(
+            'foo',
             $baseUrl,
             null,
             0,
@@ -197,11 +235,14 @@ class UnleashTest extends TestCase
         $client = $this->mockNetwork();
         $instance = new Unleash();
         $amountOfEvents = 0;
-        $instance->addListener('ready', function () use ($instance, &$amountOfEvents){
-            $this->assertTrue($instance->isEnabled('feature'));
-            $instance->destroy();
-            $amountOfEvents++;
-        });
+        $instance->addListener(
+            'ready',
+            function () use ($instance, &$amountOfEvents) {
+                $this->assertTrue($instance->isEnabled('feature'));
+                $instance->destroy();
+                $amountOfEvents++;
+            }
+        );
         $instance->initialize(
             'foo',
             'url',
@@ -224,11 +265,14 @@ class UnleashTest extends TestCase
         $client = $this->mockNetwork();
         $instance = new Unleash();
         $amountOfEvents = 0;
-        $instance->addListener('ready', function () use($instance, &$amountOfEvents){
-            $this->assertFalse($instance->isEnabled('unknown'));
-            $instance->destroy();
-            $amountOfEvents++;
-        });
+        $instance->addListener(
+            'ready',
+            function () use ($instance, &$amountOfEvents) {
+                $this->assertFalse($instance->isEnabled('unknown'));
+                $instance->destroy();
+                $amountOfEvents++;
+            }
+        );
 
         $instance->initialize(
             'foo',
@@ -253,17 +297,23 @@ class UnleashTest extends TestCase
         $instance = new Unleash();
         $amountOfEvents = 0;
         $amountOfWarnings = 0;
-        $instance->addListener('warn', function (WarnEvent $event) use (&$amountOfEvents, &$amountOfWarnings){
-            var_dump($event);
-            $amountOfEvents++;
-            $amountOfWarnings++;
-        });
-        $instance->addListener('ready', function () use (&$amountOfEvents, $instance){
-            $amountOfEvents++;
-            $this->assertTrue($instance->isEnabled('feature'));
-            $this->assertTrue($instance->isEnabled('feature', null, false));
-            $instance->destroy();
-        });
+        $instance->addListener(
+            'warn',
+            function (WarnEvent $event) use (&$amountOfEvents, &$amountOfWarnings) {
+                var_dump($event);
+                $amountOfEvents++;
+                $amountOfWarnings++;
+            }
+        );
+        $instance->addListener(
+            'ready',
+            function () use (&$amountOfEvents, $instance) {
+                $amountOfEvents++;
+                $this->assertTrue($instance->isEnabled('feature'));
+                $this->assertTrue($instance->isEnabled('feature', null, false));
+                $instance->destroy();
+            }
+        );
 
         $instance->initialize(
             'foo',
@@ -277,7 +327,6 @@ class UnleashTest extends TestCase
             [],
             $client
         );
-
 
         $this->assertFalse($instance->isEnabled('feature'));
         $this->assertEquals(1, $amountOfWarnings);

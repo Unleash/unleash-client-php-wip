@@ -44,12 +44,12 @@ class MetricsTest extends TestCase
         $this->assertFalse($metrics->sendMetrics());
     }
 
-    public function testShouldNotStartOrRegisterWhenMetricsIntervalIs0()
-    {
-        $metrics = new Metrics('', '', [], '', [], 0, true);
-        $timer = Assert::readAttribute($metrics, 'timer');
-        $this->assertNull($timer);
-    }
+    // public function testShouldNotStartOrRegisterWhenMetricsIntervalIs0()
+    // {
+    //     $metrics = new Metrics('', '', [], '', [], 0, true);
+    //     $timer = Assert::readAttribute($metrics, 'timer');
+    //     $this->assertNull($timer);
+    // }
 
     public function testSendMetricsAndRegisterWhenMetricsIntervalIsAPositiveNumber()
     {
