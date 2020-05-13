@@ -20,4 +20,9 @@ class Strategy extends StrategyTransportInterface
     {
         return $this->returnValue;
     }
+
+    public function normalizeValue($id, $groupId, $normalizer = 100)
+    {
+        return murmurhash3_int($groupId . ':' . $id) % $normalizer + 1;
+    }
 }

@@ -147,6 +147,8 @@ class Unleash extends EventDispatcher
         $this->metrics->addListener('registered', function (RegisterEvent $event) {
             $this->dispatch('registered', $event);
         });
+
+        $this->metrics->init();
     }
 
     public function fetch()
