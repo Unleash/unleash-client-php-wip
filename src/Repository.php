@@ -74,13 +74,6 @@ class Repository extends EventDispatcher
         );
     }
 
-    public function timedFetch()
-    {
-        if ($this->refreshInterval !== null && $this->refreshInterval > 0) {
-            $this->fetch();
-        }
-    }
-
     public function fetch()
     {
         $url = './client/features';

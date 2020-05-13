@@ -75,7 +75,6 @@ class Metrics extends EventDispatcher
     {
         if ($this->metricsInterval > 0) {
             $this->registerInstance();
-            $this->sendMetrics();
             register_shutdown_function(
                 function () {
                     $this->sendMetrics();
