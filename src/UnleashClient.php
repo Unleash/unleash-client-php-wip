@@ -10,11 +10,14 @@ use Unleash\Strategy\StrategyTransportInterface;
 class UnleashClient extends EventDispatcher
 {
     private $repository;
+
     private $strategies;
+
     private $warned = [];
 
     /**
      * UnleashClient constructor.
+     *
      * @param Repository $repository
      * @param Strategy[] $strategies
      */
@@ -62,7 +65,12 @@ class UnleashClient extends EventDispatcher
                     $strategies
                 )
             );
-            $this->dispatch('warn', new WarnEvent("Missing strategy " . $missingStrategy . " for toggle " . $name . ". Ensure that " . $strategyNames . " are supported before using this toggle"));
+            $this->dispatch(
+                'warn',
+                new WarnEvent(
+                    "Missing strategy " . $missingStrategy . " for toggle " . $name . ". Ensure that " . $strategyNames . " are supported before using this toggle"
+                )
+            );
         }
     }
 
@@ -89,7 +97,7 @@ class UnleashClient extends EventDispatcher
                 continue;
             }
 
-            if  ($strategy->isEnabled($strategySelector->parameters, $context)) {
+            if ($strategy->isEnabled($strategySelector->parameters, $context)) {
                 return true;
             }
         }
@@ -100,8 +108,11 @@ class UnleashClient extends EventDispatcher
     public function initialize(array $options)
     {
         $instance = new Unleash();
-        $instance->addListener('error', function () {
-        });
+        $instance->addListener(
+            'error',
+            function () {
+            }
+        );
 
         $instance->initialize(
             $options['appName'],

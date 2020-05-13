@@ -17,19 +17,28 @@ class Metrics extends EventDispatcher
 {
     /** @var Bucket */
     private $bucket;
+
     private $appName;
+
     private $instanceId;
+
     private $sdkVersion;
+
     private $strategies;
+
     private $metricsInterval;
+
     private $disabled;
+
     private $url;
+
     private $started;
+
     private $headers;
+
     private $client;
 
     const DATE_ISO_8601 = "Y-m-d\TH:i:sO";
-
 
     public function __construct(
         $appName,
@@ -51,9 +60,11 @@ class Metrics extends EventDispatcher
         $this->headers = $headers;
         $this->started = new \DateTime();
         if ($client === null) {
-            $client = new Client([
-                'base_uri' => $url,
-            ]);
+            $client = new Client(
+                [
+                    'base_uri' => $url,
+                ]
+            );
         }
         $this->client = $client;
 
@@ -65,18 +76,22 @@ class Metrics extends EventDispatcher
         if ($this->metricsInterval > 0) {
             $this->registerInstance();
             $this->sendMetrics();
-            register_shutdown_function(function() {
-                $this->sendMetrics();
-            });
+            register_shutdown_function(
+                function () {
+                    $this->sendMetrics();
+                }
+            );
         }
     }
 
-    public function startTimer() {
+    public function startTimer()
+    {
         $this->disabled = $this->metricsInterval < 1;
         return !$this->disabled;
     }
 
-    public function stop() {
+    public function stop()
+    {
         $this->disabled = true;
     }
 
@@ -155,7 +170,7 @@ class Metrics extends EventDispatcher
         if (!isset($this->bucket->toggles[$name])) {
             $this->bucket->toggles[$name] = [
                 'yes' => 0,
-                'no'  => 0,
+                'no' => 0,
             ];
         }
 
@@ -195,28 +210,33 @@ class Metrics extends EventDispatcher
     public function getClientData()
     {
         return [
-            'appName'    => $this->appName,
+            'appName' => $this->appName,
             'instanceId' => $this->instanceId,
             'sdkVersion' => $this->sdkVersion,
-            'strategies' => array_map(function (Strategy $s) { return $s->name; }, $this->strategies),
-            'interval'   => $this->metricsInterval,
-            'started'    => (new \DateTime())->format(self::DATE_ISO_8601)
+            'strategies' => array_map(
+                function (Strategy $s) {
+                    return $s->name;
+                },
+                $this->strategies
+            ),
+            'interval' => $this->metricsInterval,
+            'started' => (new \DateTime())->format(self::DATE_ISO_8601),
         ];
     }
 
     public function getMetricsData()
     {
         return [
-            'appName'    => $this->appName,
+            'appName' => $this->appName,
             'instanceId' => $this->instanceId,
-            'bucket'     => (array)$this->bucket,
+            'bucket' => (array)$this->bucket,
         ];
     }
 
     /**
      * @param array $payload JSON data
      *
-     * @param int $timeout Connection timeout in seconds.
+     * @param int   $timeout Connection timeout in seconds.
      *
      * @return array
      */
@@ -224,15 +244,15 @@ class Metrics extends EventDispatcher
     {
         return [
             'connect_timeout' => $timeout,
-            'headers'         => array_merge(
+            'headers' => array_merge(
                 [
-                    'UNLEASH-APPNAME'    => $this->appName,
+                    'UNLEASH-APPNAME' => $this->appName,
                     'UNLEASH-INSTANCEID' => $this->instanceId,
-                    'User-Agent'         => $this->appName,
+                    'User-Agent' => $this->appName,
                 ],
                 $this->headers
             ),
-            'json'            => $payload,
+            'json' => $payload,
         ];
     }
 }
