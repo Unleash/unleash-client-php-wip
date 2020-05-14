@@ -87,7 +87,6 @@ class Repository extends EventDispatcher
             return false;
         }
 
-        $this->timedFetch();
         if ($response->getStatusCode() === 304) {
             return;
         }
