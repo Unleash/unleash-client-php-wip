@@ -24,21 +24,23 @@ class Unleash extends EventDispatcher
 {
     /** @var Repository */
     private $repository;
+
     /** @var UnleashClient */
     private $client;
+
     /** @var Metrics */
     private $metrics;
 
     /**
-     * @param string $appName
-     * @param string $url
-     * @param string $instanceId
-     * @param int $refreshInterval
-     * @param int $metricsInterval
-     * @param bool $disableMetrics
-     * @param string $backupPath
-     * @param Strategy[] $strategies
-     * @param array $customHeaders
+     * @param string      $appName
+     * @param string      $url
+     * @param string      $instanceId
+     * @param int         $refreshInterval
+     * @param int         $metricsInterval
+     * @param bool        $disableMetrics
+     * @param string      $backupPath
+     * @param Strategy[]  $strategies
+     * @param array       $customHeaders
      * @param Client|null $client
      */
     public function initialize(
@@ -96,25 +98,40 @@ class Unleash extends EventDispatcher
         ];
 
         $strategies = array_merge($defaultStrategies, $strategies);
-        $this->repository->addListener('ready', function () use ($strategies) {
-            $this->client = new UnleashClient($this->repository, $strategies);
-            $this->client->addListener('error', function (ErrorEvent $event) {
+        $this->repository->addListener(
+            'ready',
+            function () use ($strategies) {
+                $this->client = new UnleashClient($this->repository, $strategies);
+                $this->client->addListener(
+                    'error',
+                    function (ErrorEvent $event) {
+                        $this->dispatch('error', $event);
+                    }
+                );
+                $this->client->addListener(
+                    'warn',
+                    function (WarnEvent $event) {
+                        $this->dispatch('warn', $event);
+                    }
+                );
+                $this->dispatch('ready');
+            }
+        );
+
+        $this->repository->addListener(
+            'error',
+            function (ErrorEvent $event) {
+                $event->getError()['message'] = 'Unleash Repository error: ' . $event->getError()['message'];
                 $this->dispatch('error', $event);
-            });
-            $this->client->addListener('warn', function (WarnEvent $event) {
+            }
+        );
+
+        $this->repository->addListener(
+            'warn',
+            function (WarnEvent $event) {
                 $this->dispatch('warn', $event);
-            });
-            $this->dispatch('ready');
-        });
-
-        $this->repository->addListener('error', function (ErrorEvent $event) {
-            $event->getError()['message'] = 'Unleash Repository error: ' . $event->getError()['message'];
-            $this->dispatch('error', $event);
-        });
-
-        $this->repository->addListener('warn', function (WarnEvent $event) {
-            $this->dispatch('warn', $event);
-        });
+            }
+        );
 
         $this->metrics = new Metrics(
             $appName,
@@ -127,26 +144,43 @@ class Unleash extends EventDispatcher
             $this->client
         );
 
-        $this->metrics->addListener('error', function (ErrorEvent $event) {
-            $event->setError('Unleash Metrics error: ' . $event->getError()['message']);
-            $this->dispatch('error', $event);
-        });
+        $this->metrics->addListener(
+            'error',
+            function (ErrorEvent $event) {
+                $event->setError('Unleash Metrics error: ' . $event->getError()['message']);
+                $this->dispatch('error', $event);
+            }
+        );
 
-        $this->metrics->addListener('warn', function (WarnEvent $event) {
-            $this->dispatch('warn', $event);
-        });
+        $this->metrics->addListener(
+            'warn',
+            function (WarnEvent $event) {
+                $this->dispatch('warn', $event);
+            }
+        );
 
-        $this->metrics->addListener('count', function (CountEvent $event) {
-            $this->dispatch('count', $event);
-        });
+        $this->metrics->addListener(
+            'count',
+            function (CountEvent $event) {
+                $this->dispatch('count', $event);
+            }
+        );
 
-        $this->metrics->addListener('sent', function (SentEvent $event) {
-            $this->dispatch('sent', $event);
-        });
+        $this->metrics->addListener(
+            'sent',
+            function (SentEvent $event) {
+                $this->dispatch('sent', $event);
+            }
+        );
 
-        $this->metrics->addListener('registered', function (RegisterEvent $event) {
-            $this->dispatch('registered', $event);
-        });
+        $this->metrics->addListener(
+            'registered',
+            function (RegisterEvent $event) {
+                $this->dispatch('registered', $event);
+            }
+        );
+
+        $this->metrics->init();
     }
 
     public function fetch()
@@ -163,7 +197,9 @@ class Unleash extends EventDispatcher
             $result = is_bool($fallbackValue) ? $fallbackValue : false;
             $this->dispatch(
                 'warn',
-                new WarnEvent('Unleash has not been initialized yet. isEnabled(' . $name . ') defaulted to ' . $fallbackValue)
+                new WarnEvent(
+                    'Unleash has not been initialized yet. isEnabled(' . $name . ') defaulted to ' . $fallbackValue
+                )
             );
         }
         $this->count($name, $result);

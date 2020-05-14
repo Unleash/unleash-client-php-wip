@@ -12,13 +12,21 @@ use Unleash\Strategy\StrategyTransportInterface;
 class Repository extends EventDispatcher
 {
     private $timer;
+
     private $url;
+
     private $refreshInterval;
+
     private $instanceId;
+
     private $appName;
+
     private $headers;
+
     private $storage;
+
     private $client;
+
     private $etag = 'unknown';
 
     public function __construct(
@@ -32,9 +40,11 @@ class Repository extends EventDispatcher
         Client $client = null
     ) {
         if ($client === null) {
-            $this->client = new Client([
-                'base_uri' => $url,
-            ]);
+            $this->client = new Client(
+                [
+                    'base_uri' => $url,
+                ]
+            );
         } else {
             $this->client = $client;
         }
@@ -50,26 +60,18 @@ class Repository extends EventDispatcher
             $this->storage = $storageImpl;
         }
 
-        $this->storage->addListener('error', function (ErrorEvent $event) {
-            $this->dispatch('error', $event);
-        });
-        $this->storage->addListener('ready', function () {
-            $this->dispatch('ready');
-        });
-    }
-
-    public function timedFetch()
-    {
-        if ($this->refreshInterval !== null && $this->refreshInterval > 0) {
-            $this->timer = new \EvTimer($this->refreshInterval, 0, function () {
-                $this->fetch();
-            });
-            if (getenv('env') !== 'test') {
-                \Ev::run(\Ev::RUN_NOWAIT);
-            } else {
-                \Ev::run();
+        $this->storage->addListener(
+            'error',
+            function (ErrorEvent $event) {
+                $this->dispatch('error', $event);
             }
-        }
+        );
+        $this->storage->addListener(
+            'ready',
+            function () {
+                $this->dispatch('ready');
+            }
+        );
     }
 
     public function fetch()
@@ -112,14 +114,27 @@ class Repository extends EventDispatcher
             $feature = new Feature();
             $feature->name = $row['name'];
             $feature->enabled = $row['enabled'];
-            $feature->strategies = [new StrategyTransportInterface($row['strategy'], isset($row['parameters']) ? $row['parameters'] : null)];
+            $feature->description = $row['description'];
+            $feature->strategies = $this->mapToStrategies($row['strategies']);
             $features[$row['name']] = $feature;
         }
 
         return [
-            'version'  => 1,
+            'version' => 1,
             'features' => $features,
         ];
+    }
+
+    protected function mapToStrategies(array $rawStrategies = null)
+    {
+        $arr = [];
+        foreach ((array)$rawStrategies as $row) {
+            $arr[] = new StrategyTransportInterface(
+                $row['name'], isset($row['parameters']) ? $row['parameters'] : null
+            );
+        }
+
+        return $arr;
     }
 
     public function getToggle($name)
@@ -136,15 +151,15 @@ class Repository extends EventDispatcher
     {
         return [
             'connect_timeout' => $timeout,
-            'headers'         => array_merge(
+            'headers' => array_merge(
                 [
-                    'UNLEASH-APPNAME'    => $this->appName,
+                    'UNLEASH-APPNAME' => $this->appName,
                     'UNLEASH-INSTANCEID' => $this->instanceId,
-                    'User-Agent'         => $this->appName,
+                    'User-Agent' => $this->appName,
                 ],
                 $this->headers
             ),
-            'If-None-match'   => $this->etag,
+            'If-None-match' => $this->etag,
         ];
     }
 }
